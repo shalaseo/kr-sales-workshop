@@ -10,10 +10,21 @@
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+        :root {
+            --teal: #4FFFB0;
+            --purple: #7B61FF;
+            --bg: #09090F;
+            --card: rgba(255,255,255,0.035);
+            --border: rgba(255,255,255,0.07);
+            --text: #F1F5F9;
+            --muted: #64748B;
+            --secondary: #94A3B8;
+        }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #09090F;
-            color: #ffffff;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -38,492 +49,532 @@
         }
 
         /* ── Header ── */
-        .header {
-            text-align: center;
-            margin-bottom: 72px;
-        }
+        .header { text-align: center; margin-bottom: 44px; }
 
         .logo {
             display: inline-block;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: #4FFFB0;
-            background: rgba(79,255,176,0.08);
-            border: 1px solid rgba(79,255,176,0.2);
-            border-radius: 20px;
-            padding: 5px 16px;
-            margin-bottom: 24px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+            color: var(--teal);
+            background: rgba(79,255,176,0.08); border: 1px solid rgba(79,255,176,0.2);
+            border-radius: 20px; padding: 5px 16px; margin-bottom: 20px;
         }
 
         .header h1 {
-            font-size: clamp(28px, 5vw, 42px);
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #4FFFB0 0%, #7B61FF 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-            line-height: 1.15;
+            font-size: clamp(26px, 5vw, 40px); font-weight: 800; letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--teal) 0%, var(--purple) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 8px;
         }
 
-        .header .subtitle {
-            font-size: 15px;
-            color: #475569;
-            font-weight: 400;
-        }
+        .header .subtitle { font-size: 14px; color: var(--muted); }
 
         .header-divider {
-            width: 48px;
-            height: 2px;
-            background: linear-gradient(90deg, #4FFFB0, #7B61FF);
-            margin: 22px auto 0;
-            border-radius: 2px;
+            width: 48px; height: 2px;
+            background: linear-gradient(90deg, var(--teal), var(--purple));
+            margin: 18px auto 0; border-radius: 2px;
         }
+
+        /* ── Tab Nav ── */
+        .tab-nav {
+            display: flex; gap: 8px; margin-bottom: 44px;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            border-radius: 14px; padding: 6px;
+        }
+
+        .tab-btn {
+            flex: 1; padding: 11px 16px; border: none; border-radius: 10px;
+            font-size: 13px; font-weight: 600; font-family: inherit;
+            cursor: pointer; transition: all 0.2s;
+            color: var(--muted); background: transparent;
+        }
+
+        .tab-btn:hover { color: var(--secondary); }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(79,255,176,0.14), rgba(123,97,255,0.14));
+            color: var(--text); border: 1px solid rgba(79,255,176,0.22);
+        }
+
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
 
         /* ── Sections ── */
-        .section { margin-bottom: 64px; }
+        .section { margin-bottom: 60px; opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
+        .section.in-view { opacity: 1; transform: translateY(0); }
 
-        .section-tag {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .section-num {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #4FFFB0;
-        }
-
-        .section-line {
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, rgba(79,255,176,0.3), transparent);
-        }
-
-        .section-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #F1F5F9;
-            margin-bottom: 20px;
-            letter-spacing: -0.01em;
-        }
+        .section-tag { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .section-num { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); white-space: nowrap; }
+        .section-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(79,255,176,0.3), transparent); }
+        .section-title { font-size: 21px; font-weight: 700; color: var(--text); margin-bottom: 20px; }
 
         /* ── Cards ── */
         .card {
-            background: rgba(255,255,255,0.035);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 16px;
-            padding: 24px 28px;
-            transition: border-color 0.25s, background 0.25s;
+            background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 24px 28px; transition: border-color 0.25s, background 0.25s;
         }
+        .card:hover { border-color: rgba(79,255,176,0.18); background: rgba(255,255,255,0.055); }
 
-        .card:hover {
-            border-color: rgba(79,255,176,0.18);
-            background: rgba(255,255,255,0.055);
-        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 14px;
-        }
-
-        @media (max-width: 600px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            .grid-3 { grid-template-columns: 1fr; }
-        }
-
-        /* ── Agenda Cards ── */
+        /* Agenda */
         .agenda-badge {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 800;
-            color: #09090F;
-            margin-bottom: 18px;
-            flex-shrink: 0;
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 800; color: #09090F; margin-bottom: 16px;
         }
+        .agenda-time { font-size: 11px; font-weight: 600; color: var(--teal); margin-bottom: 5px; }
+        .agenda-name { font-size: 16px; font-weight: 700; line-height: 1.35; margin-bottom: 5px; }
+        .agenda-desc { font-size: 12px; color: var(--muted); }
 
-        .agenda-time {
-            font-size: 11px;
-            font-weight: 600;
-            color: #4FFFB0;
-            letter-spacing: 0.05em;
-            margin-bottom: 6px;
-        }
-
-        .agenda-name {
-            font-size: 17px;
-            font-weight: 700;
-            line-height: 1.3;
-            margin-bottom: 6px;
-        }
-
-        .agenda-desc {
-            font-size: 13px;
-            color: #475569;
-        }
-
-        /* ── Topic Cards ── */
-        .topic-card {
-            text-align: center;
-            padding: 28px 18px;
-        }
-
+        /* Topics */
+        .topic-card { text-align: center; padding: 26px 16px; }
         .topic-num {
-            font-size: 30px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 6px;
-            line-height: 1;
+            font-size: 28px; font-weight: 800;
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 5px; line-height: 1;
         }
-
-        .topic-icon { font-size: 22px; margin-bottom: 8px; }
-
+        .topic-icon { font-size: 20px; margin-bottom: 7px; }
         .topic-time {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            color: #4FFFB0;
-            background: rgba(79,255,176,0.08);
-            border: 1px solid rgba(79,255,176,0.15);
-            border-radius: 12px;
-            padding: 3px 10px;
-            display: inline-block;
-            margin-bottom: 10px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--teal);
+            background: rgba(79,255,176,0.08); border: 1px solid rgba(79,255,176,0.15);
+            border-radius: 10px; padding: 2px 10px; display: inline-block; margin-bottom: 8px;
         }
+        .topic-name { font-size: 13px; font-weight: 600; color: #E2E8F0; line-height: 1.4; }
 
-        .topic-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #E2E8F0;
-            line-height: 1.4;
-        }
-
-        /* ── Voting Section ── */
+        /* ── Voting ── */
         .vote-intro {
-            background: rgba(79,255,176,0.04);
-            border: 1px solid rgba(79,255,176,0.12);
-            border-radius: 12px;
-            padding: 18px 22px;
-            margin-bottom: 22px;
-            font-size: 14px;
-            color: #94A3B8;
-            line-height: 1.65;
+            background: rgba(79,255,176,0.04); border: 1px solid rgba(79,255,176,0.12);
+            border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;
+            font-size: 14px; color: var(--secondary); line-height: 1.65;
         }
+        .vote-intro strong { color: var(--teal); font-weight: 600; }
 
-        .vote-intro strong {
-            color: #4FFFB0;
-            font-weight: 600;
-        }
-
-        .vote-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
+        .vote-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
 
         .vote-option {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 12px;
-            padding: 15px 18px;
-            cursor: pointer;
-            transition: all 0.18s;
-            user-select: none;
+            display: flex; align-items: center; gap: 14px;
+            background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px; padding: 14px 18px;
+            cursor: pointer; transition: all 0.18s; user-select: none;
         }
-
-        .vote-option:hover {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(79,255,176,0.25);
-            transform: translateX(2px);
-        }
-
-        .vote-option.selected {
-            background: rgba(79,255,176,0.07);
-            border-color: rgba(79,255,176,0.45);
-        }
-
+        .vote-option:hover { background: rgba(255,255,255,0.05); border-color: rgba(79,255,176,0.25); transform: translateX(2px); }
+        .vote-option.selected { background: rgba(79,255,176,0.07); border-color: rgba(79,255,176,0.45); }
         .vote-option.locked { cursor: default; pointer-events: none; }
 
         .opt-checkbox {
-            width: 22px;
-            height: 22px;
-            border: 2px solid rgba(255,255,255,0.18);
-            border-radius: 6px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.18s;
+            width: 22px; height: 22px; border: 2px solid rgba(255,255,255,0.18);
+            border-radius: 6px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; transition: all 0.18s;
         }
-
-        .vote-option.selected .opt-checkbox {
-            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
-            border-color: transparent;
-        }
-
-        .opt-check-icon {
-            display: none;
-            color: #09090F;
-            font-size: 13px;
-            font-weight: 800;
-            line-height: 1;
-        }
-
+        .vote-option.selected .opt-checkbox { background: linear-gradient(135deg, var(--teal), var(--purple)); border-color: transparent; }
+        .opt-check-icon { display: none; color: #09090F; font-size: 12px; font-weight: 800; }
         .vote-option.selected .opt-check-icon { display: block; }
+        .opt-num { font-size: 11px; font-weight: 700; color: var(--teal); min-width: 16px; }
+        .opt-text { font-size: 14px; font-weight: 500; color: #CBD5E1; flex: 1; }
+        .vote-option.selected .opt-text { color: var(--text); }
 
-        .opt-num {
-            font-size: 11px;
-            font-weight: 700;
-            color: #4FFFB0;
-            min-width: 16px;
-        }
-
-        .opt-text {
-            font-size: 14px;
-            font-weight: 500;
-            color: #CBD5E1;
-            flex: 1;
-        }
-
-        .vote-option.selected .opt-text { color: #F1F5F9; }
-
-        /* Submit button */
-        .submit-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            color: #09090F;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.15s;
-            letter-spacing: 0.01em;
-        }
-
-        .submit-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-        .submit-btn:active { transform: translateY(0); }
-        .submit-btn:disabled {
-            background: rgba(255,255,255,0.08);
-            color: #475569;
-            cursor: default;
-            transform: none;
-            opacity: 1;
-        }
-
-        /* ── Results Panel ── */
-        .results-panel {
-            display: none;
-            margin-top: 36px;
-        }
-
-        .results-panel.visible { display: block; }
-
-        .results-notice {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(79,255,176,0.07);
-            border: 1px solid rgba(79,255,176,0.18);
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 13px;
-            color: #4FFFB0;
-            font-weight: 500;
-            margin-bottom: 20px;
-        }
-
-        .results-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .results-title {
-            font-size: 17px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .reset-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 7px 14px;
-            color: #64748B;
-            font-size: 12px;
+        /* ── Buttons ── */
+        .primary-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            border: none; border-radius: 12px;
+            font-size: 15px; font-weight: 700; color: #09090F;
+            cursor: pointer; transition: opacity 0.2s, transform 0.15s;
             font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s;
+        }
+        .primary-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        .primary-btn:active { transform: translateY(0); }
+        .primary-btn:disabled { background: rgba(255,255,255,0.08); color: var(--muted); cursor: default; transform: none; opacity: 1; }
+
+        .ghost-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 7px 14px; color: var(--muted);
+            font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.2s;
+        }
+        .ghost-btn:hover { color: #CBD5E1; border-color: rgba(255,255,255,0.2); }
+
+        /* Results */
+        .results-panel { display: none; margin-top: 32px; }
+        .results-panel.visible { display: block; }
+        .results-notice {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(79,255,176,0.07); border: 1px solid rgba(79,255,176,0.18);
+            border-radius: 10px; padding: 11px 16px;
+            font-size: 13px; color: var(--teal); font-weight: 500; margin-bottom: 18px;
+        }
+        .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .results-title {
+            font-size: 16px; font-weight: 700;
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .chart-wrap { background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 16px; padding: 22px 20px 16px; }
+
+        /* Facilitator */
+        .fac-wrap { margin-top: 36px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.07); }
+        .fac-body { display: none; margin-top: 16px; }
+        .fac-body.open { display: block; }
+        .fac-desc { font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
+        .fac-rows { display: flex; flex-direction: column; gap: 9px; }
+        .fac-row {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px; padding: 11px 15px;
+        }
+        .fac-label { font-size: 13px; color: var(--secondary); flex: 1; }
+        .fac-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .fac-btn {
+            width: 29px; height: 29px; border-radius: 7px;
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+            color: var(--secondary); font-size: 17px; font-family: inherit;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; line-height: 1;
+        }
+        .fac-btn:hover { background: rgba(79,255,176,0.1); color: var(--teal); border-color: rgba(79,255,176,0.3); }
+        .fac-count { width: 30px; text-align: center; font-size: 16px; font-weight: 700; color: var(--teal); }
+        .fac-show-btn {
+            margin-top: 14px; width: 100%; padding: 12px;
+            background: rgba(79,255,176,0.08); border: 1px solid rgba(79,255,176,0.22);
+            border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--teal);
+            font-family: inherit; cursor: pointer; transition: all 0.2s;
+        }
+        .fac-show-btn:hover { background: rgba(79,255,176,0.14); }
+
+        /* ── Section 4: Growth Moment ── */
+        .growth-card {
+            background: linear-gradient(135deg, rgba(79,255,176,0.05), rgba(123,97,255,0.05));
+            border: 1px solid rgba(79,255,176,0.15);
+            border-radius: 20px; padding: 44px 36px; text-align: center;
+        }
+        .growth-quote {
+            font-size: 52px; line-height: 1;
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 20px; display: block;
+        }
+        .growth-question {
+            font-size: clamp(16px, 2.8vw, 22px); font-weight: 700; line-height: 1.65;
+            color: var(--text); margin-bottom: 18px;
+        }
+        .growth-sub { font-size: 13px; color: var(--muted); line-height: 1.7; }
+        .growth-chips { display: flex; gap: 8px; margin-top: 28px; flex-wrap: wrap; justify-content: center; }
+        .growth-chip {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 7px 16px; font-size: 12px; color: var(--secondary);
         }
 
-        .reset-btn:hover { color: #CBD5E1; border-color: rgba(255,255,255,0.2); }
-
-        .chart-wrap {
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 16px;
-            padding: 24px 24px 20px;
+        /* ── AI ERA TAB ── */
+        .ai-hero {
+            background: linear-gradient(135deg, rgba(79,255,176,0.04), rgba(123,97,255,0.06));
+            border: 1px solid rgba(79,255,176,0.12);
+            border-radius: 20px; padding: 36px 32px; margin-bottom: 36px;
+        }
+        .ai-hero-tag {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--teal); margin-bottom: 14px;
+        }
+        .ai-hero-q {
+            font-size: clamp(15px, 2.5vw, 19px); font-weight: 700; line-height: 1.7; color: var(--text);
+        }
+        .ai-hero-q em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
-        /* ── Facilitator Mode ── */
-        .facilitator-wrap {
-            margin-top: 40px;
-            padding-top: 28px;
+        /* Counter */
+        .counter-wrap {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px 20px; margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .counter-label { font-size: 13px; color: var(--secondary); }
+        .counter-val { font-size: 18px; font-weight: 800; color: var(--teal); }
+        .counter-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; margin-bottom: 32px; }
+        .counter-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--purple)); border-radius: 2px; transition: width 0.4s; }
+
+        /* Sliders */
+        .sliders-wrap { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+
+        .slider-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 20px 22px;
+        }
+        .slider-name { font-size: 14px; font-weight: 600; color: #E2E8F0; margin-bottom: 14px; }
+        .slider-ends { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .slider-end-ai { font-size: 11px; font-weight: 600; color: rgba(123,97,255,0.85); }
+        .slider-end-me { font-size: 11px; font-weight: 600; color: rgba(79,255,176,0.85); }
+
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer;
+            background: linear-gradient(to right, rgba(123,97,255,0.5), rgba(79,255,176,0.5));
+            margin-bottom: 8px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+            background: #fff; border: 3px solid var(--teal);
+            box-shadow: 0 0 8px rgba(79,255,176,0.4); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: 0 0 14px rgba(79,255,176,0.6); }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #fff; border: 3px solid var(--teal); cursor: pointer;
+        }
+
+        .slider-indicator { text-align: center; font-size: 11px; color: var(--muted); transition: color 0.2s; }
+
+        /* Action row */
+        .action-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .action-row .primary-btn { flex: 1; }
+
+        /* AI Results */
+        .ai-results { display: none; margin-top: 8px; }
+        .ai-legend {
+            display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--secondary); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .ai-chart-box {
+            background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px 20px 16px;
+        }
+        .ai-chart-note { font-size: 11px; color: #1E293B; text-align: center; margin-top: 12px; }
+
+        .show-results-btn {
+            width: 100%; padding: 13px;
+            background: rgba(79,255,176,0.08); border: 1px solid rgba(79,255,176,0.22);
+            border-radius: 11px; font-size: 14px; font-weight: 600; color: var(--teal);
+            font-family: inherit; cursor: pointer; transition: all 0.2s; margin-top: 4px;
+        }
+        .show-results-btn:hover { background: rgba(79,255,176,0.14); }
+
+        .footer { text-align: center; padding-top: 40px; font-size: 12px; color: #1E293B; }
+
+        /* ── Priority Form ── */
+        .pri-section {
+            margin-top: 40px; padding-top: 32px;
             border-top: 1px solid rgba(255,255,255,0.07);
         }
+        .pri-section-title { font-size: 21px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+        .pri-section-desc { font-size: 14px; color: var(--secondary); margin-bottom: 28px; line-height: 1.6; }
 
-        .fac-toggle {
-            background: none;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 7px 15px;
-            color: #475569;
-            font-size: 12px;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s;
+        .field-group { margin-bottom: 18px; }
+        .field-label { display: block; font-size: 12px; font-weight: 600; color: var(--teal); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+
+        .text-input {
+            width: 100%; background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+            padding: 12px 16px; color: var(--text); font-size: 14px; font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .text-input::placeholder { color: var(--muted); }
+        .text-input:focus { border-color: rgba(79,255,176,0.4); outline: none; }
+
+        .select-input {
+            width: 100%; background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+            padding: 12px 40px 12px 16px; color: var(--text); font-size: 14px; font-family: inherit;
+            cursor: pointer; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 14px center;
+            transition: border-color 0.2s;
+        }
+        .select-input:focus { border-color: rgba(79,255,176,0.4); outline: none; }
+        .select-input option { background: #13141F; color: var(--text); }
+
+        .other-input { margin-top: 10px; display: none; }
+
+        .pri-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        @media (max-width: 640px) { .pri-grid { grid-template-columns: 1fr; } }
+
+        .pri-col {
+            background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px;
         }
 
-        .fac-toggle:hover { color: #94A3B8; border-color: rgba(255,255,255,0.18); }
+        /* ── Results Tab ── */
+        .results-empty {
+            text-align: center; padding: 60px 24px;
+            color: var(--muted); font-size: 14px; line-height: 1.7;
+        }
+        .results-empty-icon { font-size: 36px; margin-bottom: 14px; display: block; }
 
-        .fac-body {
-            display: none;
-            margin-top: 18px;
+        .result-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+
+        .result-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 20px 24px;
+            transition: border-color 0.2s;
+        }
+        .result-card:hover { border-color: rgba(79,255,176,0.15); }
+
+        .result-name {
+            font-size: 15px; font-weight: 700; color: var(--teal); margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
         }
 
-        .fac-body.open { display: block; }
-
-        .fac-desc {
-            font-size: 12px;
-            color: #475569;
-            margin-bottom: 18px;
-            line-height: 1.5;
+        .result-name-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), var(--purple)); flex-shrink: 0;
         }
 
-        .fac-rows { display: flex; flex-direction: column; gap: 10px; }
+        .result-pris { display: flex; flex-direction: column; gap: 8px; }
 
-        .fac-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 10px;
-            padding: 12px 16px;
+        .result-pri-row { display: flex; align-items: flex-start; gap: 10px; }
+
+        .pri-badge {
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            color: #09090F; font-size: 10px; font-weight: 800;
+            border-radius: 4px; padding: 2px 8px; flex-shrink: 0; margin-top: 2px;
+            letter-spacing: 0.05em;
         }
 
-        .fac-label {
-            font-size: 13px;
-            color: #94A3B8;
-            flex: 1;
+        .result-pri-text { font-size: 13px; color: var(--secondary); line-height: 1.5; }
+
+        .results-toolbar {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;
+        }
+        .results-count { font-size: 13px; color: var(--muted); }
+
+        /* ── Group View ── */
+        .group-toggle-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 7px 14px; color: var(--muted);
+            font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.2s;
+        }
+        .group-toggle-btn:hover { color: #CBD5E1; border-color: rgba(255,255,255,0.2); }
+        .group-toggle-btn.active {
+            background: rgba(79,255,176,0.1); border-color: rgba(79,255,176,0.3);
+            color: var(--teal);
         }
 
-        .fac-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
+        .group-view { display: none; margin-top: 24px; }
+        .group-view.visible { display: block; }
 
-        .fac-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 7px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: #94A3B8;
-            font-size: 17px;
-            font-family: inherit;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-            line-height: 1;
+        .group-block {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 22px 24px; margin-bottom: 14px;
+            transition: border-color 0.2s;
         }
+        .group-block:hover { border-color: rgba(79,255,176,0.18); }
 
-        .fac-btn:hover {
-            background: rgba(79,255,176,0.1);
-            color: #4FFFB0;
-            border-color: rgba(79,255,176,0.3);
+        .group-header {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
         }
-
-        .fac-count {
-            width: 32px;
-            text-align: center;
-            font-size: 17px;
-            font-weight: 700;
-            color: #4FFFB0;
+        .group-label {
+            font-size: 12px; font-weight: 800; letter-spacing: 0.12em;
+            text-transform: uppercase; color: #09090F;
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            border-radius: 6px; padding: 3px 10px;
         }
+        .group-member-count { font-size: 13px; color: var(--muted); }
 
-        .fac-show-btn {
-            margin-top: 16px;
-            width: 100%;
-            padding: 13px;
-            background: rgba(79,255,176,0.09);
-            border: 1px solid rgba(79,255,176,0.25);
-            border-radius: 11px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #4FFFB0;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s;
+        .group-shared-wrap { margin-bottom: 16px; }
+        .group-shared-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+        .group-shared-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+        .shared-tag {
+            background: rgba(79,255,176,0.08); border: 1px solid rgba(79,255,176,0.2);
+            border-radius: 20px; padding: 4px 12px;
+            font-size: 12px; color: var(--teal);
+            display: flex; align-items: center; gap: 6px;
         }
+        .shared-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
 
-        .fac-show-btn:hover {
-            background: rgba(79,255,176,0.15);
-            border-color: rgba(79,255,176,0.4);
+        .group-members-wrap { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+        .group-member-row { display: flex; align-items: flex-start; gap: 12px; }
+        .member-name-tag {
+            font-size: 12px; font-weight: 700; color: var(--text);
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px; padding: 3px 10px; flex-shrink: 0; white-space: nowrap;
         }
+        .member-pri-list { font-size: 12px; color: var(--muted); line-height: 1.6; }
+        .member-pri-highlight { color: var(--teal); font-weight: 500; }
 
-        /* ── Footer ── */
-        .footer {
-            text-align: center;
-            padding-top: 48px;
-            font-size: 12px;
-            color: #1E293B;
+        .solo-block {
+            background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.07);
+            border-radius: 16px; padding: 18px 24px; margin-bottom: 14px;
         }
+        .solo-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+        .solo-members { display: flex; flex-direction: column; gap: 8px; }
 
-        /* Scroll animation */
-        .section { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
-        .section.in-view { opacity: 1; transform: translateY(0); }
+        /* ── PDP Form ── */
+        .pdp-intro {
+            background: linear-gradient(135deg, rgba(79,255,176,0.04), rgba(123,97,255,0.06));
+            border: 1px solid rgba(79,255,176,0.12);
+            border-radius: 20px; padding: 32px; margin-bottom: 36px;
+        }
+        .pdp-intro-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+        .pdp-intro-title { font-size: clamp(18px, 3vw, 24px); font-weight: 800; color: var(--text); margin-bottom: 8px; }
+        .pdp-intro-desc { font-size: 14px; color: var(--secondary); line-height: 1.65; }
+
+        .pdp-fields { display: flex; flex-direction: column; gap: 24px; margin-bottom: 28px; }
+
+        .pdp-field {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 22px 24px; transition: border-color 0.2s;
+        }
+        .pdp-field:focus-within { border-color: rgba(79,255,176,0.3); }
+
+        .pdp-field-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+
+        .pdp-num {
+            width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--teal), var(--purple));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 800; color: #09090F; margin-top: 2px;
+        }
+        .pdp-label-wrap {}
+        .pdp-label { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+        .pdp-hint { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+        .textarea-input {
+            width: 100%; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+            padding: 12px 16px; color: var(--text); font-size: 14px; font-family: inherit;
+            resize: vertical; min-height: 88px; line-height: 1.65; transition: border-color 0.2s;
+        }
+        .textarea-input::placeholder { color: var(--muted); }
+        .textarea-input:focus { border-color: rgba(79,255,176,0.35); outline: none; }
+
+        /* ── PDP Results ── */
+        .pdp-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 0; overflow: hidden; margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        .pdp-card:hover { border-color: rgba(79,255,176,0.18); }
+
+        .pdp-card-header {
+            background: linear-gradient(135deg, rgba(79,255,176,0.08), rgba(123,97,255,0.08));
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 16px 24px; display: flex; align-items: center; gap: 10px;
+        }
+        .pdp-card-name { font-size: 16px; font-weight: 700; color: var(--text); }
+        .pdp-card-dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--purple)); flex-shrink: 0; }
+
+        .pdp-card-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 18px; }
+
+        .pdp-answer-row {}
+        .pdp-answer-label {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--teal); margin-bottom: 5px;
+        }
+        .pdp-answer-text { font-size: 14px; color: var(--secondary); line-height: 1.65; white-space: pre-wrap; }
+
+        .pdp-results-empty {
+            text-align: center; padding: 60px 24px;
+            color: var(--muted); font-size: 14px; line-height: 1.7;
+        }
+        .pdp-results-empty-icon { font-size: 36px; margin-bottom: 14px; display: block; }
+
+        /* Wider tab buttons for 5 tabs */
+        .tab-btn { font-size: 12px; padding: 10px 10px; }
+        @media (max-width: 700px) { .tab-nav { flex-wrap: wrap; } .tab-btn { flex: 1 1 40%; } }
     </style>
 </head>
 <body>
@@ -537,332 +588,1075 @@
         <div class="header-divider"></div>
     </div>
 
-    <!-- Section 1: Agenda -->
-    <div class="section" id="s1">
-        <div class="section-tag">
-            <span class="section-num">Section 01</span>
-            <div class="section-line"></div>
-        </div>
-        <div class="section-title">Today's Agenda</div>
-        <div class="grid-2">
-            <div class="card">
-                <div class="agenda-badge">01</div>
-                <div class="agenda-time">13:00 – 15:00</div>
-                <div class="agenda-name">5 Dynamics<br>Get to Know</div>
-                <div class="agenda-desc">Breaking the ice with team members</div>
-            </div>
-            <div class="card">
-                <div class="agenda-badge">02</div>
-                <div class="agenda-time">15:00 – 17:00</div>
-                <div class="agenda-name">Career Talk<br>&amp; Growth</div>
-                <div class="agenda-desc">Defining growth, envisioning futures</div>
-            </div>
-        </div>
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('career', this)">💼 Career Talk</button>
+        <button class="tab-btn" onclick="switchTab('ai', this)">🤖 AI Era</button>
+        <button class="tab-btn" onclick="switchTab('results', this)">📋 Priorities</button>
+        <button class="tab-btn" onclick="switchTab('pdp', this)">📝 My PDP</button>
+        <button class="tab-btn" onclick="switchTab('pdpresults', this)">📊 PDP Results</button>
     </div>
 
-    <!-- Section 2: Career Talk Topics -->
-    <div class="section" id="s2">
-        <div class="section-tag">
-            <span class="section-num">Section 02</span>
-            <div class="section-line"></div>
-        </div>
-        <div class="section-title">Career Talk: 3 Key Topics</div>
-        <div class="grid-3">
-            <div class="card topic-card">
-                <div class="topic-num">01</div>
-                <div class="topic-icon">📊</div>
-                <div class="topic-time">30 MIN</div>
-                <div class="topic-name">What Defines<br>Growth?</div>
+    <!-- ══════════════════════════════
+         CAREER TALK TAB
+    ══════════════════════════════ -->
+    <div id="tab-career" class="tab-pane active">
+
+        <!-- Section 1 -->
+        <div class="section in-view">
+            <div class="section-tag">
+                <span class="section-num">Section 01</span>
+                <div class="section-line"></div>
             </div>
-            <div class="card topic-card">
-                <div class="topic-num">02</div>
-                <div class="topic-icon">🎯</div>
-                <div class="topic-time">30 MIN</div>
-                <div class="topic-name">My Growth<br>in 5 Years</div>
+            <div class="section-title">Today's Agenda</div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="agenda-badge">01</div>
+                    <div class="agenda-time">13:00 – 15:00</div>
+                    <div class="agenda-name">5 Dynamics<br>Get to Know</div>
+                    <div class="agenda-desc">Breaking the ice with team members</div>
+                </div>
+                <div class="card">
+                    <div class="agenda-badge">02</div>
+                    <div class="agenda-time">15:00 – 17:00</div>
+                    <div class="agenda-name">Career Talk<br>&amp; Growth</div>
+                    <div class="agenda-desc">Defining growth, envisioning futures</div>
+                </div>
             </div>
-            <div class="card topic-card">
-                <div class="topic-num">03</div>
-                <div class="topic-icon">🤖</div>
-                <div class="topic-time">60 MIN</div>
-                <div class="topic-name">Evolving in<br>the AI Era</div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section in-view">
+            <div class="section-tag">
+                <span class="section-num">Section 02</span>
+                <div class="section-line"></div>
+            </div>
+            <div class="section-title">Career Talk: 3 Key Topics</div>
+            <div class="grid-3">
+                <div class="card topic-card">
+                    <div class="topic-num">01</div>
+                    <div class="topic-icon">📊</div>
+                    <div class="topic-time">30 MIN</div>
+                    <div class="topic-name">What Defines<br>Growth?</div>
+                </div>
+                <div class="card topic-card">
+                    <div class="topic-num">02</div>
+                    <div class="topic-icon">🤖</div>
+                    <div class="topic-time">60 MIN</div>
+                    <div class="topic-name">Evolving in<br>the AI Era</div>
+                </div>
+                <div class="card topic-card">
+                    <div class="topic-num">03</div>
+                    <div class="topic-icon">🎯</div>
+                    <div class="topic-time">30 MIN</div>
+                    <div class="topic-name">My Growth<br>in 5 Years</div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Section 3: Voting -->
-    <div class="section" id="s3">
-        <div class="section-tag">
-            <span class="section-num">Section 03</span>
-            <div class="section-line"></div>
+        <!-- Section 3: Voting -->
+        <div class="section in-view">
+            <div class="section-tag">
+                <span class="section-num">Section 03</span>
+                <div class="section-line"></div>
+            </div>
+            <div class="section-title">What Defines Growth?</div>
+
+            <div class="vote-intro">
+                성장의 정의는 사람마다 다릅니다. <strong>나에게 가장 중요한 성장의 기준</strong>을 모두 선택해주세요 (복수 선택 가능).
+            </div>
+
+            <div class="vote-options" id="voteOptions"></div>
+
+            <button class="primary-btn" id="submitBtn" onclick="submitVote()">
+                <span id="submitLabel">투표하기 · Submit Vote</span>
+            </button>
+
+            <div class="results-panel" id="resultsPanel">
+                <div class="results-notice" id="resultsNotice">✓ 투표 완료 · 아래에서 내 선택 결과를 확인하세요</div>
+                <div class="results-header">
+                    <div class="results-title">📊 투표 결과</div>
+                    <button class="ghost-btn" onclick="resetVote()">다시 투표</button>
+                </div>
+                <div class="chart-wrap"><canvas id="voteChart"></canvas></div>
+            </div>
+
+            <!-- Facilitator -->
+            <div class="fac-wrap">
+                <button class="ghost-btn" onclick="toggleFac()">🎙 Facilitator Mode</button>
+                <div class="fac-body" id="facBody">
+                    <p class="fac-desc" style="margin-top:12px;">팀 전체 투표를 집계하세요. +/- 로 인원 입력 후 결과를 표시합니다.</p>
+                    <div class="fac-rows" id="facRows"></div>
+                    <button class="fac-show-btn" onclick="showTeamResults()">📈 팀 전체 결과 보기 · Show Team Results</button>
+                </div>
+            </div>
         </div>
-        <div class="section-title">What Defines Growth?</div>
 
-        <div class="vote-intro">
-            성장의 정의는 사람마다 다릅니다. 아래에서 <strong>나에게 가장 중요한 성장의 기준</strong>을 모두 선택해주세요 (복수 선택 가능).
+        <!-- Section 4: My Best Growth Moment -->
+        <div class="section in-view">
+            <div class="section-tag">
+                <span class="section-num">Section 04</span>
+                <div class="section-line"></div>
+            </div>
+            <div class="section-title">My Best Growth Moment</div>
+
+            <div class="growth-card">
+                <span class="growth-quote">"</span>
+                <div class="growth-question">
+                    와, 나 진짜 많이 성장했다"고 느꼈던<br>순간은 언제였나요?<br>왜 그렇게 느꼈나요?
+                </div>
+                <div class="growth-sub">
+                    지난 1~2년간 몰로코 또는 이전 직장에서 일하면서 가장 성장했다고 느낀 순간을 떠올려보세요.
+                </div>
+                <div class="growth-chips">
+                    <span class="growth-chip">📌 구체적인 상황은?</span>
+                    <span class="growth-chip">💭 무엇이 변했나요?</span>
+                    <span class="growth-chip">⭐ 누가 인정해줬나요?</span>
+                </div>
+            </div>
         </div>
 
-        <div class="vote-options" id="voteOptions"></div>
+    </div><!-- /tab-career -->
 
-        <button class="submit-btn" id="submitBtn" onclick="submitVote()">
-            <span id="submitLabel">투표하기 · Submit Vote</span>
+    <!-- ══════════════════════════════
+         AI ERA TAB
+    ══════════════════════════════ -->
+    <div id="tab-ai" class="tab-pane">
+
+        <!-- Hero Question -->
+        <div class="ai-hero">
+            <div class="ai-hero-tag">AI Era · Section 01</div>
+            <div class="ai-hero-q">
+                AI를 통해 내가 하는 일 중<br>
+                <em>무엇이 줄어들고</em>, <em>무엇이 강화되며</em>,<br>
+                또 <em>어떤 새로운 일이 생겨나는가?</em>
+            </div>
+        </div>
+
+        <!-- Response counter -->
+        <div class="counter-wrap">
+            <span class="counter-label">수집된 응답 · Responses collected</span>
+            <span class="counter-val" id="responseCount">0 / 16</span>
+        </div>
+        <div class="counter-track" style="margin-bottom:28px;">
+            <div class="counter-fill" id="counterFill" style="width:0%"></div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="sliders-wrap" id="slidersWrap"></div>
+
+        <!-- Actions -->
+        <div class="action-row">
+            <button class="primary-btn" id="aiSubmitBtn" onclick="submitAI()">응답 제출 · Submit Response</button>
+            <button class="ghost-btn" onclick="clearAI()" style="min-width:80px;">Reset All</button>
+        </div>
+
+        <!-- Show results button -->
+        <button class="show-results-btn" id="showResBtn" onclick="showAIResults()">
+            📊 팀 결과 보기 · View Team Results
         </button>
 
-        <!-- Results -->
-        <div class="results-panel" id="resultsPanel">
-            <div class="results-notice">✓ 투표 완료 · 아래에서 내 선택 결과를 확인하세요</div>
+        <!-- Dot plot results -->
+        <div class="ai-results" id="aiResults">
+            <div style="height:20px"></div>
             <div class="results-header">
-                <div class="results-title">📊 투표 결과</div>
-                <button class="reset-btn" onclick="resetVote()">다시 투표</button>
+                <div class="results-title">📊 팀 전체 응답 분포</div>
+                <button class="ghost-btn" onclick="hideAIResults()">닫기</button>
             </div>
-            <div class="chart-wrap">
-                <canvas id="myChart"></canvas>
+            <div class="ai-legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:rgba(123,97,255,0.75)"></div>
+                    <span>🤖 AI가 대체 · Automated</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:rgba(79,255,176,0.75)"></div>
+                    <span>💪 내가 집중 · My Focus</span>
+                </div>
+            </div>
+            <div class="ai-chart-box">
+                <canvas id="aiChart"></canvas>
+            </div>
+            <p class="ai-chart-note">각 점 = 한 사람의 응답 · Each dot = one person's response</p>
+        </div>
+
+        <!-- Priority Form Section -->
+        <div class="pri-section">
+            <div class="section-tag" style="margin-bottom:10px;">
+                <span class="section-num">Section 02</span>
+                <div class="section-line"></div>
+            </div>
+            <div class="pri-section-title">6개월 우선순위 · 6-Month Priorities</div>
+            <div class="pri-section-desc">다음 6개월 동안 가장 집중하고 싶은 Top 3 우선순위를 선택해주세요.</div>
+
+            <div class="field-group">
+                <label class="field-label">이름 · Name</label>
+                <input type="text" id="priName" class="text-input" placeholder="Enter your name">
+            </div>
+
+            <div class="pri-grid">
+                <div class="pri-col">
+                    <label class="field-label">Priority 1</label>
+                    <select id="pri1" class="select-input" onchange="handleOther(1)">
+                        <option value="">선택해주세요</option>
+                        <option value="Understanding client needs to support">Understanding client needs to support</option>
+                        <option value="Deepening client relationship">Deepening client relationship</option>
+                        <option value="Enhancing speed of execution">Enhancing speed of execution</option>
+                        <option value="Enhancing execution quality">Enhancing execution quality</option>
+                        <option value="Providing proactive consultation">Providing proactive consultation</option>
+                        <option value="Building growth strategy (for a key vertical, account, business, etc)">Building growth strategy</option>
+                        <option value="__other__">Other (input your own)</option>
+                    </select>
+                    <input type="text" id="pri1Other" class="text-input other-input" placeholder="Your agenda...">
+                </div>
+                <div class="pri-col">
+                    <label class="field-label">Priority 2</label>
+                    <select id="pri2" class="select-input" onchange="handleOther(2)">
+                        <option value="">선택해주세요</option>
+                        <option value="Understanding client needs to support">Understanding client needs to support</option>
+                        <option value="Deepening client relationship">Deepening client relationship</option>
+                        <option value="Enhancing speed of execution">Enhancing speed of execution</option>
+                        <option value="Enhancing execution quality">Enhancing execution quality</option>
+                        <option value="Providing proactive consultation">Providing proactive consultation</option>
+                        <option value="Building growth strategy (for a key vertical, account, business, etc)">Building growth strategy</option>
+                        <option value="__other__">Other (input your own)</option>
+                    </select>
+                    <input type="text" id="pri2Other" class="text-input other-input" placeholder="Your agenda...">
+                </div>
+                <div class="pri-col">
+                    <label class="field-label">Priority 3</label>
+                    <select id="pri3" class="select-input" onchange="handleOther(3)">
+                        <option value="">선택해주세요</option>
+                        <option value="Understanding client needs to support">Understanding client needs to support</option>
+                        <option value="Deepening client relationship">Deepening client relationship</option>
+                        <option value="Enhancing speed of execution">Enhancing speed of execution</option>
+                        <option value="Enhancing execution quality">Enhancing execution quality</option>
+                        <option value="Providing proactive consultation">Providing proactive consultation</option>
+                        <option value="Building growth strategy (for a key vertical, account, business, etc)">Building growth strategy</option>
+                        <option value="__other__">Other (input your own)</option>
+                    </select>
+                    <input type="text" id="pri3Other" class="text-input other-input" placeholder="Your agenda...">
+                </div>
+            </div>
+
+            <div style="margin-top:20px;">
+                <button class="primary-btn" onclick="submitPriority()">우선순위 제출 · Submit Priorities</button>
             </div>
         </div>
 
-        <!-- Facilitator Mode -->
-        <div class="facilitator-wrap">
-            <button class="fac-toggle" onclick="toggleFacilitator()">🎙 Facilitator Mode</button>
-            <div class="fac-body" id="facBody">
-                <p class="fac-desc">팀 전체 투표를 직접 집계하세요. 각 항목의 +/- 버튼으로 인원을 입력한 후 결과를 표시합니다.</p>
-                <div class="fac-rows" id="facRows"></div>
-                <button class="fac-show-btn" onclick="showTeamResults()">📈 팀 전체 결과 보기 · Show Team Results</button>
+    </div><!-- /tab-ai -->
+
+    <!-- ══════════════════════════════
+         PRIORITY RESULTS TAB
+    ══════════════════════════════ -->
+    <div id="tab-results" class="tab-pane">
+
+        <div class="results-toolbar">
+            <div>
+                <div style="font-size:21px; font-weight:700; color:var(--text); margin-bottom:4px;">팀 우선순위 · Team Priorities</div>
+                <div class="results-count" id="resultsCount">0명 응답</div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button class="group-toggle-btn" id="groupToggleBtn" onclick="toggleGroupView()">🔗 Group View</button>
+                <button class="ghost-btn" onclick="clearPriorities()">Clear All</button>
             </div>
         </div>
-    </div>
 
-</div>
+        <div id="resultCards" class="result-cards"></div>
+        <div id="groupView" class="group-view"></div>
 
+    </div><!-- /tab-results -->
+
+    <!-- ══════════════════════════════
+         PDP FORM TAB
+    ══════════════════════════════ -->
+    <div id="tab-pdp" class="tab-pane">
+
+        <div class="pdp-intro">
+            <div class="pdp-intro-tag">Personal Development Plan</div>
+            <div class="pdp-intro-title">나의 성장 계획 · My Growth Plan</div>
+            <div class="pdp-intro-desc">오늘 워크숍에서 나눈 이야기를 바탕으로 나만의 성장 계획을 작성해보세요. 솔직하고 구체적일수록 더 강력한 계획이 됩니다.</div>
+        </div>
+
+        <div class="pdp-fields">
+
+            <div class="pdp-field">
+                <div class="pdp-field-header">
+                    <div class="pdp-num">01</div>
+                    <div class="pdp-label-wrap">
+                        <div class="pdp-label">이름 · Name</div>
+                    </div>
+                </div>
+                <input type="text" id="pdpName" class="text-input" placeholder="Enter your name">
+            </div>
+
+            <div class="pdp-field">
+                <div class="pdp-field-header">
+                    <div class="pdp-num">02</div>
+                    <div class="pdp-label-wrap">
+                        <div class="pdp-label">My Growth Definition</div>
+                        <div class="pdp-hint">What does growth mean to me? 직급, 전문성, 성취감... 나만의 기준으로 정의해보세요.</div>
+                    </div>
+                </div>
+                <textarea id="pdpGrowth" class="textarea-input" placeholder="e.g. Growth to me means becoming the trusted advisor my clients seek out first — not just closing deals, but shaping their strategy..."></textarea>
+            </div>
+
+            <div class="pdp-field">
+                <div class="pdp-field-header">
+                    <div class="pdp-num">03</div>
+                    <div class="pdp-label-wrap">
+                        <div class="pdp-label">My 5-Year Vision</div>
+                        <div class="pdp-hint">Manager path (leading teams, strategic decisions) or Expert path (go-to person in a specific domain)? 어떤 모습이고 싶나요?</div>
+                    </div>
+                </div>
+                <textarea id="pdpVision" class="textarea-input" placeholder="e.g. In 5 years, I want to be leading a regional sales team, setting strategy for the SEA market, and mentoring junior AEs..."></textarea>
+            </div>
+
+            <div class="pdp-field">
+                <div class="pdp-field-header">
+                    <div class="pdp-num">04</div>
+                    <div class="pdp-label-wrap">
+                        <div class="pdp-label">AI Leverage Plan</div>
+                        <div class="pdp-hint">Which parts of your work do you plan to leverage AI to reclaim time from in the next 6 months?</div>
+                    </div>
+                </div>
+                <textarea id="pdpAI" class="textarea-input" placeholder="e.g. I'll use AI for first-draft proposals and research prep, freeing ~2h/week to spend on deeper discovery calls..."></textarea>
+            </div>
+
+            <div class="pdp-field">
+                <div class="pdp-field-header">
+                    <div class="pdp-num">05</div>
+                    <div class="pdp-label-wrap">
+                        <div class="pdp-label">Skills &amp; Behaviors to Invest In</div>
+                        <div class="pdp-hint">What specific skills or behaviors do you want to build or strengthen?</div>
+                    </div>
+                </div>
+                <textarea id="pdpSkills" class="textarea-input" placeholder="e.g. Strategic storytelling for exec-level presentations, and improving my ability to ask deeper discovery questions..."></textarea>
+            </div>
+
+            <div class="pdp-field">
+                <div class="pdp-field-header">
+                    <div class="pdp-num">06</div>
+                    <div class="pdp-label-wrap">
+                        <div class="pdp-label">Support I Need</div>
+                        <div class="pdp-hint">From manager, peers, or the company — training, mentoring, stretch projects, introductions, etc.</div>
+                    </div>
+                </div>
+                <textarea id="pdpSupport" class="textarea-input" placeholder="e.g. Monthly 1:1 coaching with my manager focused on deal strategy. Opportunity to lead a cross-functional project in H2..."></textarea>
+            </div>
+
+            <div class="pdp-field">
+                <div class="pdp-field-header">
+                    <div class="pdp-num">07</div>
+                    <div class="pdp-label-wrap">
+                        <div class="pdp-label">How I'll Measure Success</div>
+                        <div class="pdp-hint">1–2 concrete signals you can measure by end of 2026.</div>
+                    </div>
+                </div>
+                <textarea id="pdpMeasure" class="textarea-input" placeholder="e.g. 1) Achieve 110% of H2 revenue target. 2) Lead at least one client QBR independently and receive positive feedback..."></textarea>
+            </div>
+
+        </div>
+
+        <button class="primary-btn" id="pdpSubmitBtn" onclick="submitPDP()">
+            PDP 제출 · Submit My Plan
+        </button>
+
+    </div><!-- /tab-pdp -->
+
+    <!-- ══════════════════════════════
+         PDP RESULTS TAB
+    ══════════════════════════════ -->
+    <div id="tab-pdpresults" class="tab-pane">
+
+        <div class="results-toolbar">
+            <div>
+                <div style="font-size:21px; font-weight:700; color:var(--text); margin-bottom:4px;">PDP Results</div>
+                <div class="results-count" id="pdpResultsCount">0명 제출</div>
+            </div>
+            <button class="ghost-btn" onclick="clearPDPs()">Clear All</button>
+        </div>
+
+        <div id="pdpResultCards" style="margin-top:24px;"></div>
+
+    </div><!-- /tab-pdpresults -->
+
+</div><!-- /container -->
 <div class="footer">moloco · Q3'26 Korea Sales Workshop</div>
 
 <script>
-    const OPTIONS = [
-        { id: 1, emoji: '📈', text: '프로모션 (직급 상승)' },
-        { id: 2, emoji: '💰', text: '연봉 인상' },
-        { id: 3, emoji: '🔄', text: '새로운 역할' },
-        { id: 4, emoji: '🏆', text: '어려운 문제 해결, 프로젝트 완료에서 얻는 성취감' },
-        { id: 5, emoji: '🧠', text: '새로운 전문성 확보' },
-        { id: 6, emoji: '⚙️', text: '새로운 기술 마스터' },
-    ];
+/* ────────────────────────────────────────
+   VOTING (Section 3)
+──────────────────────────────────────── */
+const VOTE_OPTS = [
+    { id:1, emoji:'📈', text:'프로모션 (직급 상승)' },
+    { id:2, emoji:'💰', text:'연봉 인상' },
+    { id:3, emoji:'🔄', text:'새로운 역할' },
+    { id:4, emoji:'🏆', text:'어려운 문제 해결, 프로젝트 완료에서 얻는 성취감' },
+    { id:5, emoji:'🧠', text:'새로운 전문성 확보' },
+    { id:6, emoji:'⚙️', text:'새로운 기술 마스터' },
+];
 
-    let selected = new Set();
-    let hasVoted = false;
-    let tallyCounts = OPTIONS.map(() => 0);
-    let chart = null;
-    let facOpen = false;
+let selected = new Set(), hasVoted = false;
+let tallyCounts = VOTE_OPTS.map(() => 0);
+let voteChart = null, facOpen = false;
 
-    /* ── State persistence ── */
-    function loadState() {
-        try {
-            const s = localStorage.getItem('moloco_workshop_q326');
-            if (!s) return;
-            const d = JSON.parse(s);
-            selected = new Set(d.selected || []);
-            hasVoted = !!d.hasVoted;
-            tallyCounts = d.tallyCounts || OPTIONS.map(() => 0);
-        } catch(e) {}
+function loadVote() {
+    try {
+        const d = JSON.parse(localStorage.getItem('mw_vote') || 'null');
+        if (!d) return;
+        selected = new Set(d.selected); hasVoted = !!d.hasVoted; tallyCounts = d.tally;
+    } catch(e) {}
+}
+function saveVote() {
+    localStorage.setItem('mw_vote', JSON.stringify({ selected:[...selected], hasVoted, tally:tallyCounts }));
+}
+
+function renderVoteOpts() {
+    document.getElementById('voteOptions').innerHTML = VOTE_OPTS.map(o => `
+        <div class="vote-option ${selected.has(o.id)?'selected':''} ${hasVoted?'locked':''}"
+             id="vo${o.id}" onclick="${hasVoted?'':'toggleVote('+o.id+')'}">
+            <div class="opt-checkbox"><span class="opt-check-icon">✓</span></div>
+            <span class="opt-num">${o.id}</span>
+            <span class="opt-text">${o.emoji} ${o.text}</span>
+        </div>`).join('');
+
+    const btn = document.getElementById('submitBtn');
+    if (hasVoted) {
+        btn.disabled = true;
+        document.getElementById('submitLabel').textContent = '✓ 투표 완료';
+        document.getElementById('resultsPanel').classList.add('visible');
+        drawVoteChart([...selected], false);
     }
+}
 
-    function saveState() {
-        try {
-            localStorage.setItem('moloco_workshop_q326', JSON.stringify({
-                selected: [...selected],
-                hasVoted,
-                tallyCounts
-            }));
-        } catch(e) {}
-    }
+function toggleVote(id) {
+    const el = document.getElementById('vo'+id);
+    if (selected.has(id)) { selected.delete(id); el.classList.remove('selected'); }
+    else { selected.add(id); el.classList.add('selected'); }
+}
 
-    /* ── Render vote options ── */
-    function renderOptions() {
-        const el = document.getElementById('voteOptions');
-        el.innerHTML = OPTIONS.map(opt => `
-            <div
-                class="vote-option ${selected.has(opt.id) ? 'selected' : ''} ${hasVoted ? 'locked' : ''}"
-                id="opt-${opt.id}"
-                onclick="${hasVoted ? '' : `toggleOpt(${opt.id})`}"
-            >
-                <div class="opt-checkbox">
-                    <span class="opt-check-icon">✓</span>
-                </div>
-                <span class="opt-num">${opt.id}</span>
-                <span class="opt-text">${opt.emoji} ${opt.text}</span>
-            </div>
-        `).join('');
+function submitVote() {
+    if (!selected.size) { alert('최소 1가지 이상 선택해주세요.'); return; }
+    hasVoted = true; saveVote(); renderVoteOpts();
+}
 
-        const btn = document.getElementById('submitBtn');
-        if (hasVoted) {
-            btn.disabled = true;
-            document.getElementById('submitLabel').textContent = '✓ 투표 완료';
-            document.getElementById('resultsPanel').classList.add('visible');
-            renderIndividualChart([...selected]);
-        }
-    }
+function drawVoteChart(selIds, isTeam) {
+    if (voteChart) { voteChart.destroy(); voteChart = null; }
+    const data = isTeam ? tallyCounts : VOTE_OPTS.map(o => selIds.includes(o.id) ? 1 : 0);
+    const maxVal = isTeam ? Math.max(...tallyCounts, 1) : 1;
+    const ctx = document.getElementById('voteChart').getContext('2d');
 
-    function toggleOpt(id) {
-        const el = document.getElementById(`opt-${id}`);
-        if (selected.has(id)) {
-            selected.delete(id);
-            el.classList.remove('selected');
-        } else {
-            selected.add(id);
-            el.classList.add('selected');
-        }
-    }
-
-    /* ── Submit ── */
-    function submitVote() {
-        if (selected.size === 0) {
-            alert('최소 1가지 이상 선택해주세요.');
-            return;
-        }
-        hasVoted = true;
-        saveState();
-        renderOptions();
-    }
-
-    /* ── Charts ── */
-    function buildChart(labels, data, barColors, borderColors, maxVal) {
-        if (chart) { chart.destroy(); chart = null; }
-        const ctx = document.getElementById('myChart').getContext('2d');
-
-        chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: barColors,
-                    borderColor: borderColors,
-                    borderWidth: 1,
-                    borderRadius: 6,
-                    borderSkipped: false,
-                }]
+    voteChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: VOTE_OPTS.map(() => ''),
+            datasets: [{
+                data,
+                backgroundColor: data.map((v,i) => isTeam
+                    ? `rgba(79,255,176,${(0.2 + (v/maxVal)*0.6).toFixed(2)})`
+                    : (selIds.includes(VOTE_OPTS[i].id) ? 'rgba(79,255,176,0.72)' : 'rgba(255,255,255,0.05)')),
+                borderColor: data.map((v,i) => isTeam
+                    ? (v > 0 ? '#4FFFB0' : 'rgba(255,255,255,0.07)')
+                    : (selIds.includes(VOTE_OPTS[i].id) ? '#4FFFB0' : 'rgba(255,255,255,0.07)')),
+                borderWidth: 1, borderRadius: 6,
+            }]
+        },
+        options: {
+            indexAxis: 'y', responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor:'rgba(9,9,15,0.9)', borderColor:'rgba(79,255,176,0.2)', borderWidth:1,
+                    titleColor:'#4FFFB0', bodyColor:'#94A3B8',
+                    callbacks: {
+                        title: items => VOTE_OPTS[items[0].dataIndex].text,
+                        label: item => isTeam ? ` ${item.raw}명 선택` : (item.raw ? ' 선택됨 ✓' : ' 미선택'),
+                    }
+                }
             },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(9,9,15,0.9)',
-                        borderColor: 'rgba(79,255,176,0.2)',
-                        borderWidth: 1,
-                        titleColor: '#4FFFB0',
-                        bodyColor: '#94A3B8',
-                        callbacks: {
-                            title: (items) => OPTIONS[items[0].dataIndex].text,
-                            label: (item) => ` ${item.raw}${maxVal === 1 ? (item.raw ? ' 선택됨 ✓' : ' 미선택') : '명 선택'}`,
+            scales: {
+                x: { min:0, max: isTeam ? undefined : 1.2, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{display:!isTeam, color:'#475569', stepSize:1}, border:{display:false} },
+                y: {
+                    grid:{display:false}, border:{display:false},
+                    ticks: { color:'#64748B', font:{size:12,family:'Inter'},
+                        callback: (v,i) => { const t=VOTE_OPTS[i].emoji+' '+VOTE_OPTS[i].text; return t.length>27?t.slice(0,27)+'…':t; } }
+                }
+            }
+        }
+    });
+    document.getElementById('voteChart').parentElement.style.height = (VOTE_OPTS.length*52+24)+'px';
+}
+
+function showTeamResults() {
+    document.getElementById('resultsPanel').classList.add('visible');
+    document.getElementById('resultsNotice').textContent = '📊 팀 전체 집계 결과 · Team Aggregated Results';
+    drawVoteChart([], true);
+}
+
+function resetVote() {
+    if (!confirm('투표를 초기화하시겠습니까?')) return;
+    selected.clear(); hasVoted = false; localStorage.removeItem('mw_vote');
+    if (voteChart) { voteChart.destroy(); voteChart = null; }
+    document.getElementById('resultsPanel').classList.remove('visible');
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitLabel').textContent = '투표하기 · Submit Vote';
+    renderVoteOpts();
+}
+
+function toggleFac() {
+    facOpen = !facOpen;
+    document.getElementById('facBody').classList.toggle('open', facOpen);
+    if (facOpen) {
+        document.getElementById('facRows').innerHTML = VOTE_OPTS.map((o,i) => `
+            <div class="fac-row">
+                <span class="fac-label">${o.emoji} ${o.text}</span>
+                <div class="fac-controls">
+                    <button class="fac-btn" onclick="adjTally(${i},-1)">−</button>
+                    <span class="fac-count" id="tc${i}">${tallyCounts[i]}</span>
+                    <button class="fac-btn" onclick="adjTally(${i},1)">+</button>
+                </div>
+            </div>`).join('');
+    }
+}
+
+function adjTally(i, d) {
+    tallyCounts[i] = Math.max(0, tallyCounts[i]+d);
+    document.getElementById('tc'+i).textContent = tallyCounts[i];
+    saveVote();
+}
+
+/* ────────────────────────────────────────
+   AI ERA SLIDERS + DOT PLOT
+──────────────────────────────────────── */
+const TASKS = [
+    { id:'email',    emoji:'✉️',  label:'Email Communication' },
+    { id:'proposal', emoji:'📄',  label:'Campaign Proposal' },
+    { id:'monitor',  emoji:'📊',  label:'Campaign Monitoring' },
+    { id:'meeting',  emoji:'🤝',  label:'Client Meeting & Interaction' },
+    { id:'research', emoji:'🔍',  label:'Market Research' },
+    { id:'strategy', emoji:'🧭',  label:'Strategy Building' },
+];
+const MAX_R = 16;
+let aiResponses = [], aiChart = null;
+
+function loadAI() {
+    try { aiResponses = JSON.parse(localStorage.getItem('mw_ai') || '[]'); } catch(e) {}
+}
+function saveAI() {
+    localStorage.setItem('mw_ai', JSON.stringify(aiResponses));
+}
+
+function renderSliders() {
+    document.getElementById('slidersWrap').innerHTML = TASKS.map(t => `
+        <div class="slider-card">
+            <div class="slider-name">${t.emoji} ${t.label}</div>
+            <div class="slider-ends">
+                <span class="slider-end-ai">🤖 AI가 대체 · Automated</span>
+                <span class="slider-end-me">💪 내가 집중 · My Focus</span>
+            </div>
+            <input type="range" id="sl-${t.id}" min="0" max="100" value="50"
+                   oninput="updateInd('${t.id}',this.value)">
+            <div class="slider-indicator" id="ind-${t.id}">⚖ 균형 · Balanced</div>
+        </div>`).join('');
+    updateCounter();
+}
+
+function updateInd(id, val) {
+    val = parseInt(val);
+    const el = document.getElementById('ind-'+id);
+    let txt, col;
+    if      (val <= 20) { txt='🤖 주로 AI · Mostly AI';         col='rgba(123,97,255,0.9)'; }
+    else if (val <= 40) { txt='↙ AI 쪽으로 · Leaning AI';       col='rgba(123,97,255,0.65)'; }
+    else if (val <= 60) { txt='⚖ 균형 · Balanced';              col='#64748B'; }
+    else if (val <= 80) { txt='↗ 내 비중 높음 · Leaning Focus';  col='rgba(79,255,176,0.65)'; }
+    else                { txt='💪 주로 나 · Mostly Me';          col='rgba(79,255,176,0.9)'; }
+    el.textContent = txt; el.style.color = col;
+}
+
+function updateCounter() {
+    const n = aiResponses.length;
+    document.getElementById('responseCount').textContent = `${n} / ${MAX_R}`;
+    document.getElementById('counterFill').style.width = `${(n/MAX_R)*100}%`;
+}
+
+function submitAI() {
+    if (aiResponses.length >= MAX_R) { alert(`이미 ${MAX_R}명의 응답이 완료되었습니다.`); return; }
+
+    const values = TASKS.map(t => parseInt(document.getElementById('sl-'+t.id).value));
+    const jitters = TASKS.map(() => (Math.random()-0.5)*0.42);
+    aiResponses.push({ values, jitters });
+    saveAI(); updateCounter();
+
+    // Reset sliders
+    TASKS.forEach(t => { document.getElementById('sl-'+t.id).value = 50; updateInd(t.id, 50); });
+
+    // Flash feedback
+    const btn = document.getElementById('aiSubmitBtn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ 응답 저장됨!';
+    Object.assign(btn.style, { background:'rgba(79,255,176,0.15)', color:'#4FFFB0', border:'1px solid rgba(79,255,176,0.3)' });
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = btn.style.color = btn.style.border = ''; }, 1500);
+
+    // Refresh chart if open
+    if (document.getElementById('aiResults').style.display !== 'none') drawDotPlot();
+}
+
+// Custom plugin: background zones + midline
+const bgPlugin = {
+    id: 'bg',
+    beforeDraw(chart) {
+        const { ctx, chartArea, scales } = chart;
+        if (!chartArea || !scales.x) return;
+        const { left, right, top, bottom } = chartArea;
+        const mid = scales.x.getPixelForValue(50);
+        ctx.save();
+        ctx.fillStyle = 'rgba(123,97,255,0.07)';
+        ctx.fillRect(left, top, mid-left, bottom-top);
+        ctx.fillStyle = 'rgba(79,255,176,0.06)';
+        ctx.fillRect(mid, top, right-mid, bottom-top);
+        ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+        ctx.lineWidth = 1; ctx.setLineDash([5,5]);
+        ctx.beginPath(); ctx.moveTo(mid, top); ctx.lineTo(mid, bottom); ctx.stroke();
+        ctx.setLineDash([]); ctx.restore();
+    }
+};
+
+function drawDotPlot() {
+    if (aiChart) { aiChart.destroy(); aiChart = null; }
+    if (!aiResponses.length) return;
+
+    const pts = [];
+    aiResponses.forEach(r => {
+        r.values.forEach((v, ti) => pts.push({ x:v, y:ti + (r.jitters[ti]||0) }));
+    });
+
+    const canvasH = TASKS.length * 70 + 40;
+    const canvas = document.getElementById('aiChart');
+    canvas.style.height = canvasH + 'px';
+
+    aiChart = new Chart(canvas.getContext('2d'), {
+        type: 'scatter',
+        plugins: [bgPlugin],
+        data: {
+            datasets: [{
+                data: pts,
+                backgroundColor: 'rgba(79,255,176,0.55)',
+                borderColor: 'rgba(79,255,176,0.85)',
+                borderWidth: 1.5,
+                pointRadius: 7,
+                pointHoverRadius: 10,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor:'rgba(9,9,15,0.9)', borderColor:'rgba(79,255,176,0.2)', borderWidth:1,
+                    titleColor:'#4FFFB0', bodyColor:'#94A3B8',
+                    callbacks: {
+                        title: items => TASKS[Math.round(items[0].parsed.y)]?.label || '',
+                        label: item => {
+                            const v = item.parsed.x;
+                            const d = v<=30 ? 'AI 주도' : v<=60 ? '균형' : '내가 집중';
+                            return ` ${v} · ${d}`;
                         }
                     }
+                }
+            },
+            scales: {
+                x: {
+                    min:0, max:100,
+                    grid:{color:'rgba(255,255,255,0.04)'}, border:{display:false},
+                    ticks: {
+                        color:'#475569', font:{size:11,family:'Inter'}, maxTicksLimit:5,
+                        callback: v => { if(v===0) return '🤖 AI'; if(v===50) return '⚖ 균형'; if(v===100) return '💪 나'; return ''; }
+                    }
                 },
-                scales: {
-                    x: {
-                        min: 0,
-                        max: maxVal <= 1 ? 1.2 : undefined,
-                        grid: { color: 'rgba(255,255,255,0.04)' },
-                        ticks: { display: false },
-                        border: { display: false }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: {
-                            color: '#64748B',
-                            font: { size: 12, family: 'Inter' },
-                            callback: (val, i) => {
-                                const t = OPTIONS[i].emoji + ' ' + OPTIONS[i].text;
-                                return t.length > 24 ? t.substring(0, 24) + '…' : t;
-                            }
-                        },
-                        border: { display: false }
+                y: {
+                    min:-0.6, max:TASKS.length-0.4,
+                    grid:{color:'rgba(255,255,255,0.04)'}, border:{display:false},
+                    ticks: {
+                        stepSize:1, color:'#94A3B8', font:{size:12,family:'Inter'},
+                        callback: v => { const i=Math.round(v); return (i>=0&&i<TASKS.length) ? TASKS[i].emoji+' '+TASKS[i].label : ''; }
                     }
                 }
             }
-        });
+        }
+    });
+}
 
-        document.getElementById('myChart').parentElement.style.height = (OPTIONS.length * 54 + 20) + 'px';
+function showAIResults() {
+    document.getElementById('aiResults').style.display = 'block';
+    document.getElementById('showResBtn').style.display = 'none';
+    drawDotPlot();
+    document.getElementById('aiResults').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function hideAIResults() {
+    document.getElementById('aiResults').style.display = 'none';
+    document.getElementById('showResBtn').style.display = 'block';
+}
+
+function clearAI() {
+    if (!aiResponses.length) return;
+    if (!confirm('모든 응답을 초기화하시겠습니까?')) return;
+    aiResponses = []; localStorage.removeItem('mw_ai');
+    if (aiChart) { aiChart.destroy(); aiChart = null; }
+    updateCounter();
+    document.getElementById('aiResults').style.display = 'none';
+    document.getElementById('showResBtn').style.display = 'block';
+    renderSliders();
+}
+
+/* ────────────────────────────────────────
+   PRIORITY FORM
+──────────────────────────────────────── */
+let priResponses = [];
+
+function loadPri() {
+    try { priResponses = JSON.parse(localStorage.getItem('mw_pri') || '[]'); } catch(e) {}
+}
+function savePri() {
+    localStorage.setItem('mw_pri', JSON.stringify(priResponses));
+}
+
+function handleOther(n) {
+    const sel = document.getElementById('pri'+n);
+    const inp = document.getElementById('pri'+n+'Other');
+    inp.style.display = sel.value === '__other__' ? 'block' : 'none';
+    if (sel.value !== '__other__') inp.value = '';
+}
+
+function getPriValue(n) {
+    const sel = document.getElementById('pri'+n);
+    if (sel.value === '__other__') {
+        const txt = document.getElementById('pri'+n+'Other').value.trim();
+        return txt ? 'Other: ' + txt : '';
+    }
+    return sel.value;
+}
+
+function submitPriority() {
+    const name = document.getElementById('priName').value.trim();
+    const p1 = getPriValue(1), p2 = getPriValue(2), p3 = getPriValue(3);
+
+    if (!name)       { alert('이름을 입력해주세요 · Please enter your name.'); return; }
+    if (!p1)         { alert('Priority 1을 선택해주세요.'); return; }
+    if (!p2)         { alert('Priority 2을 선택해주세요.'); return; }
+    if (!p3)         { alert('Priority 3을 선택해주세요.'); return; }
+
+    priResponses.push({ name, priorities: [p1, p2, p3], ts: Date.now() });
+    savePri();
+    renderResultCards();
+
+    // Reset form
+    document.getElementById('priName').value = '';
+    [1,2,3].forEach(n => {
+        document.getElementById('pri'+n).value = '';
+        document.getElementById('pri'+n+'Other').style.display = 'none';
+        document.getElementById('pri'+n+'Other').value = '';
+    });
+
+    // Flash feedback
+    const btn = event.currentTarget;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ 제출 완료!';
+    Object.assign(btn.style, { background:'rgba(79,255,176,0.15)', color:'#4FFFB0', border:'1px solid rgba(79,255,176,0.3)' });
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = btn.style.color = btn.style.border = ''; }, 1500);
+}
+
+function renderResultCards() {
+    const container = document.getElementById('resultCards');
+    const count = document.getElementById('resultsCount');
+    count.textContent = priResponses.length + '명 응답';
+
+    if (!priResponses.length) {
+        container.innerHTML = `<div class="results-empty">
+            <span class="results-empty-icon">📋</span>
+            아직 제출된 응답이 없습니다.<br>AI Era 탭에서 우선순위를 입력해주세요.
+        </div>`;
+        return;
     }
 
-    function renderIndividualChart(selectedIds) {
-        const data = OPTIONS.map(o => selectedIds.includes(o.id) ? 1 : 0);
-        const barColors = data.map(v => v ? 'rgba(79,255,176,0.75)' : 'rgba(255,255,255,0.06)');
-        const borderColors = data.map(v => v ? '#4FFFB0' : 'rgba(255,255,255,0.08)');
-        const labels = OPTIONS.map(o => '');
-        buildChart(labels, data, barColors, borderColors, 1);
-    }
-
-    function showTeamResults() {
-        document.getElementById('resultsPanel').classList.add('visible');
-        document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        const maxVal = Math.max(...tallyCounts, 1);
-        const barColors = tallyCounts.map(v => {
-            const alpha = 0.25 + (v / maxVal) * 0.6;
-            return `rgba(79,255,176,${alpha.toFixed(2)})`;
-        });
-        const borderColors = tallyCounts.map(v => v > 0 ? '#4FFFB0' : 'rgba(255,255,255,0.08)');
-        const labels = OPTIONS.map(o => '');
-
-        // Update notice
-        const notice = document.querySelector('.results-notice');
-        notice.textContent = '📊 팀 전체 투표 결과 · Team Aggregated Results';
-
-        buildChart(labels, tallyCounts, barColors, borderColors, maxVal);
-    }
-
-    /* ── Reset ── */
-    function resetVote() {
-        if (!confirm('투표를 초기화하시겠습니까?')) return;
-        selected.clear();
-        hasVoted = false;
-        localStorage.removeItem('moloco_workshop_q326');
-        if (chart) { chart.destroy(); chart = null; }
-        document.getElementById('resultsPanel').classList.remove('visible');
-        renderOptions();
-    }
-
-    /* ── Facilitator ── */
-    function toggleFacilitator() {
-        facOpen = !facOpen;
-        const body = document.getElementById('facBody');
-        body.classList.toggle('open', facOpen);
-        if (facOpen) renderFacRows();
-    }
-
-    function renderFacRows() {
-        document.getElementById('facRows').innerHTML = OPTIONS.map((opt, i) => `
-            <div class="fac-row">
-                <span class="fac-label">${opt.emoji} ${opt.text}</span>
-                <div class="fac-controls">
-                    <button class="fac-btn" onclick="adjustTally(${i}, -1)">−</button>
-                    <span class="fac-count" id="tc-${i}">${tallyCounts[i]}</span>
-                    <button class="fac-btn" onclick="adjustTally(${i}, 1)">+</button>
-                </div>
+    container.innerHTML = priResponses.map((r, idx) => `
+        <div class="result-card">
+            <div class="result-name">
+                <div class="result-name-dot"></div>
+                ${escHtml(r.name)}
             </div>
-        `).join('');
+            <div class="result-pris">
+                ${r.priorities.map((p, i) => `
+                    <div class="result-pri-row">
+                        <span class="pri-badge">P${i+1}</span>
+                        <span class="result-pri-text">${escHtml(p)}</span>
+                    </div>`).join('')}
+            </div>
+        </div>`).join('');
+}
+
+function clearPriorities() {
+    if (!priResponses.length) return;
+    if (!confirm('모든 응답을 초기화하시겠습니까?')) return;
+    priResponses = []; localStorage.removeItem('mw_pri');
+    renderResultCards();
+    if (groupViewActive) renderGroupView();
+}
+
+/* ────────────────────────────────────────
+   PERSONAL DEVELOPMENT PLAN
+──────────────────────────────────────── */
+const PDP_FIELDS = [
+    { key:'growth',  label:'My Growth Definition' },
+    { key:'vision',  label:'My 5-Year Vision' },
+    { key:'ai',      label:'AI Leverage Plan' },
+    { key:'skills',  label:'Skills & Behaviors to Invest In' },
+    { key:'support', label:'Support I Need' },
+    { key:'measure', label:'How I\'ll Measure Success' },
+];
+
+let pdpResponses = [];
+
+function loadPDP() {
+    try { pdpResponses = JSON.parse(localStorage.getItem('mw_pdp') || '[]'); } catch(e) {}
+}
+function savePDP() {
+    localStorage.setItem('mw_pdp', JSON.stringify(pdpResponses));
+}
+
+function submitPDP() {
+    const entry = {
+        name:    document.getElementById('pdpName').value.trim(),
+        growth:  document.getElementById('pdpGrowth').value.trim(),
+        vision:  document.getElementById('pdpVision').value.trim(),
+        ai:      document.getElementById('pdpAI').value.trim(),
+        skills:  document.getElementById('pdpSkills').value.trim(),
+        support: document.getElementById('pdpSupport').value.trim(),
+        measure: document.getElementById('pdpMeasure').value.trim(),
+        ts: Date.now(),
+    };
+
+    if (!entry.name) { alert('이름을 입력해주세요 · Please enter your name.'); return; }
+    const missing = PDP_FIELDS.find(f => !entry[f.key]);
+    if (missing) { alert(`"${missing.label}" 항목을 입력해주세요.`); return; }
+
+    pdpResponses.push(entry);
+    savePDP();
+    renderPDPResults();
+
+    // Reset
+    ['pdpName','pdpGrowth','pdpVision','pdpAI','pdpSkills','pdpSupport','pdpMeasure']
+        .forEach(id => { document.getElementById(id).value = ''; });
+
+    // Flash
+    const btn = document.getElementById('pdpSubmitBtn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ 제출 완료!';
+    Object.assign(btn.style, { background:'rgba(79,255,176,0.15)', color:'#4FFFB0', border:'1px solid rgba(79,255,176,0.3)' });
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = btn.style.color = btn.style.border = ''; }, 1800);
+}
+
+function renderPDPResults() {
+    const container = document.getElementById('pdpResultCards');
+    const count = document.getElementById('pdpResultsCount');
+    if (!container) return;
+    count.textContent = pdpResponses.length + '명 제출';
+
+    if (!pdpResponses.length) {
+        container.innerHTML = `<div class="pdp-results-empty">
+            <span class="pdp-results-empty-icon">📝</span>
+            아직 제출된 PDP가 없습니다.<br>My PDP 탭에서 작성 후 제출해주세요.
+        </div>`;
+        return;
     }
 
-    function adjustTally(i, delta) {
-        tallyCounts[i] = Math.max(0, tallyCounts[i] + delta);
-        document.getElementById(`tc-${i}`).textContent = tallyCounts[i];
-        saveState();
+    container.innerHTML = pdpResponses.map(r => `
+        <div class="pdp-card">
+            <div class="pdp-card-header">
+                <div class="pdp-card-dot"></div>
+                <div class="pdp-card-name">${escHtml(r.name)}</div>
+            </div>
+            <div class="pdp-card-body">
+                ${PDP_FIELDS.map(f => `
+                    <div class="pdp-answer-row">
+                        <div class="pdp-answer-label">${f.label}</div>
+                        <div class="pdp-answer-text">${escHtml(r[f.key])}</div>
+                    </div>`).join('')}
+            </div>
+        </div>`).join('');
+}
+
+function clearPDPs() {
+    if (!pdpResponses.length) return;
+    if (!confirm('모든 PDP를 초기화하시겠습니까?')) return;
+    pdpResponses = []; localStorage.removeItem('mw_pdp');
+    renderPDPResults();
+}
+
+/* ────────────────────────────────────────
+   GROUP VIEW
+──────────────────────────────────────── */
+let groupViewActive = false;
+
+function toggleGroupView() {
+    groupViewActive = !groupViewActive;
+    const btn = document.getElementById('groupToggleBtn');
+    btn.classList.toggle('active', groupViewActive);
+    document.getElementById('resultCards').style.display = groupViewActive ? 'none' : 'flex';
+    const gv = document.getElementById('groupView');
+    gv.classList.toggle('visible', groupViewActive);
+    if (groupViewActive) renderGroupView();
+}
+
+function buildGroups(responses) {
+    const n = responses.length;
+    const parent = Array.from({length: n}, (_, i) => i);
+
+    function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+    function union(x, y) { parent[find(x)] = find(y); }
+
+    function sharedPriorities(a, b) {
+        const setA = new Set(responses[a].priorities);
+        return responses[b].priorities.filter(p => setA.has(p));
     }
 
-    /* ── Scroll animation ── */
-    function initScrollObserver() {
-        const sections = document.querySelectorAll('.section');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) e.target.classList.add('in-view');
-            });
-        }, { threshold: 0.08 });
-        sections.forEach(s => observer.observe(s));
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            if (sharedPriorities(i, j).length >= 2) union(i, j);
+        }
     }
 
-    /* ── Init ── */
-    loadState();
-    renderOptions();
-    initScrollObserver();
+    // Collect groups
+    const groupMap = {};
+    for (let i = 0; i < n; i++) {
+        const root = find(i);
+        if (!groupMap[root]) groupMap[root] = [];
+        groupMap[root].push(i);
+    }
+
+    const groups = Object.values(groupMap).sort((a, b) => b.length - a.length);
+    const actual = groups.filter(g => g.length > 1);
+    const solos  = groups.filter(g => g.length === 1).map(g => g[0]);
+    return { actual, solos };
+}
+
+function getSharedInGroup(indices, responses) {
+    // Priorities that appear in ≥ 2 members of the group
+    const priCount = {};
+    indices.forEach(idx => {
+        responses[idx].priorities.forEach(p => { priCount[p] = (priCount[p] || 0) + 1; });
+    });
+    return Object.entries(priCount)
+        .filter(([, c]) => c >= 2)
+        .sort(([, a], [, b]) => b - a)
+        .map(([p]) => p);
+}
+
+function renderGroupView() {
+    const container = document.getElementById('groupView');
+    if (!priResponses.length) { container.innerHTML = ''; return; }
+
+    const { actual, solos } = buildGroups(priResponses);
+    const groupLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let html = '';
+
+    if (!actual.length) {
+        html += `<div style="text-align:center; padding:32px; color:var(--muted); font-size:14px; line-height:1.7;">
+            공통 우선순위가 2개 이상인 그룹이 없습니다.<br>응답이 더 쌓이면 그룹이 형성됩니다.
+        </div>`;
+    }
+
+    actual.forEach((group, gi) => {
+        const shared = getSharedInGroup(group, priResponses);
+        const sharedSet = new Set(shared);
+
+        html += `<div class="group-block">
+            <div class="group-header">
+                <span class="group-label">Group ${groupLetters[gi]}</span>
+                <span class="group-member-count">${group.length}명</span>
+            </div>`;
+
+        if (shared.length) {
+            html += `<div class="group-shared-wrap">
+                <div class="group-shared-label">공통 우선순위 · Shared Priorities</div>
+                <div class="group-shared-tags">
+                    ${shared.map(p => `<span class="shared-tag"><span class="shared-tag-dot"></span>${escHtml(p)}</span>`).join('')}
+                </div>
+            </div>`;
+        }
+
+        html += `<div class="group-members-wrap">
+            ${group.map(idx => {
+                const r = priResponses[idx];
+                const priHtml = r.priorities.map(p =>
+                    `<span class="${sharedSet.has(p) ? 'member-pri-highlight' : ''}">${escHtml(p)}</span>`
+                ).join(' · ');
+                return `<div class="group-member-row">
+                    <span class="member-name-tag">${escHtml(r.name)}</span>
+                    <span class="member-pri-list">${priHtml}</span>
+                </div>`;
+            }).join('')}
+        </div></div>`;
+    });
+
+    if (solos.length) {
+        html += `<div class="solo-block">
+            <div class="solo-label">그룹 미배정 · No group match (shared &lt; 2 priorities with others)</div>
+            <div class="solo-members">
+                ${solos.map(idx => {
+                    const r = priResponses[idx];
+                    return `<div class="group-member-row">
+                        <span class="member-name-tag">${escHtml(r.name)}</span>
+                        <span class="member-pri-list">${r.priorities.map(p => escHtml(p)).join(' · ')}</span>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+    }
+
+    container.innerHTML = html;
+}
+
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ────────────────────────────────────────
+   TAB SWITCHING
+──────────────────────────────────────── */
+function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+    btn.classList.add('active');
+    if (tab === 'results') renderResultCards();
+    if (tab === 'pdpresults') renderPDPResults();
+}
+
+/* ────────────────────────────────────────
+   SCROLL ANIMATION
+──────────────────────────────────────── */
+function initObserver() {
+    const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); }), {threshold:0.06});
+    document.querySelectorAll('.section').forEach(s => obs.observe(s));
+}
+
+/* ────────────────────────────────────────
+   INIT
+──────────────────────────────────────── */
+loadVote(); loadAI(); loadPri(); loadPDP();
+renderVoteOpts(); renderSliders(); renderResultCards(); renderPDPResults();
+initObserver();
+// Render fac rows on load (hidden)
+document.getElementById('facRows').innerHTML = VOTE_OPTS.map((o,i) => `
+    <div class="fac-row">
+        <span class="fac-label">${o.emoji} ${o.text}</span>
+        <div class="fac-controls">
+            <button class="fac-btn" onclick="adjTally(${i},-1)">−</button>
+            <span class="fac-count" id="tc${i}">${tallyCounts[i]}</span>
+            <button class="fac-btn" onclick="adjTally(${i},1)">+</button>
+        </div>
+    </div>`).join('');
 </script>
 </body>
 </html>
