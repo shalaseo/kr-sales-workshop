@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moloco KR Sales Workshop Q3'26</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #09090F;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 15% 15%, rgba(79,255,176,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 85% 85%, rgba(123,97,255,0.06) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 56px 24px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            margin-bottom: 72px;
+        }
+
+        .logo {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #4FFFB0;
+            background: rgba(79,255,176,0.08);
+            border: 1px solid rgba(79,255,176,0.2);
+            border-radius: 20px;
+            padding: 5px 16px;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #4FFFB0 0%, #7B61FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            line-height: 1.15;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            color: #475569;
+            font-weight: 400;
+        }
+
+        .header-divider {
+            width: 48px;
+            height: 2px;
+            background: linear-gradient(90deg, #4FFFB0, #7B61FF);
+            margin: 22px auto 0;
+            border-radius: 2px;
+        }
+
+        /* ── Sections ── */
+        .section { margin-bottom: 64px; }
+
+        .section-tag {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .section-num {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #4FFFB0;
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(79,255,176,0.3), transparent);
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #F1F5F9;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 24px 28px;
+            transition: border-color 0.25s, background 0.25s;
+        }
+
+        .card:hover {
+            border-color: rgba(79,255,176,0.18);
+            background: rgba(255,255,255,0.055);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        /* ── Agenda Cards ── */
+        .agenda-badge {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #09090F;
+            margin-bottom: 18px;
+            flex-shrink: 0;
+        }
+
+        .agenda-time {
+            font-size: 11px;
+            font-weight: 600;
+            color: #4FFFB0;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .agenda-name {
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+
+        .agenda-desc {
+            font-size: 13px;
+            color: #475569;
+        }
+
+        /* ── Topic Cards ── */
+        .topic-card {
+            text-align: center;
+            padding: 28px 18px;
+        }
+
+        .topic-num {
+            font-size: 30px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+
+        .topic-icon { font-size: 22px; margin-bottom: 8px; }
+
+        .topic-time {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #4FFFB0;
+            background: rgba(79,255,176,0.08);
+            border: 1px solid rgba(79,255,176,0.15);
+            border-radius: 12px;
+            padding: 3px 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .topic-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #E2E8F0;
+            line-height: 1.4;
+        }
+
+        /* ── Voting Section ── */
+        .vote-intro {
+            background: rgba(79,255,176,0.04);
+            border: 1px solid rgba(79,255,176,0.12);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            font-size: 14px;
+            color: #94A3B8;
+            line-height: 1.65;
+        }
+
+        .vote-intro strong {
+            color: #4FFFB0;
+            font-weight: 600;
+        }
+
+        .vote-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .vote-option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px;
+            padding: 15px 18px;
+            cursor: pointer;
+            transition: all 0.18s;
+            user-select: none;
+        }
+
+        .vote-option:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(79,255,176,0.25);
+            transform: translateX(2px);
+        }
+
+        .vote-option.selected {
+            background: rgba(79,255,176,0.07);
+            border-color: rgba(79,255,176,0.45);
+        }
+
+        .vote-option.locked { cursor: default; pointer-events: none; }
+
+        .opt-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(255,255,255,0.18);
+            border-radius: 6px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.18s;
+        }
+
+        .vote-option.selected .opt-checkbox {
+            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
+            border-color: transparent;
+        }
+
+        .opt-check-icon {
+            display: none;
+            color: #09090F;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .vote-option.selected .opt-check-icon { display: block; }
+
+        .opt-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4FFFB0;
+            min-width: 16px;
+        }
+
+        .opt-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #CBD5E1;
+            flex: 1;
+        }
+
+        .vote-option.selected .opt-text { color: #F1F5F9; }
+
+        /* Submit button */
+        .submit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #09090F;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+            letter-spacing: 0.01em;
+        }
+
+        .submit-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn:disabled {
+            background: rgba(255,255,255,0.08);
+            color: #475569;
+            cursor: default;
+            transform: none;
+            opacity: 1;
+        }
+
+        /* ── Results Panel ── */
+        .results-panel {
+            display: none;
+            margin-top: 36px;
+        }
+
+        .results-panel.visible { display: block; }
+
+        .results-notice {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(79,255,176,0.07);
+            border: 1px solid rgba(79,255,176,0.18);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #4FFFB0;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .results-title {
+            font-size: 17px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4FFFB0, #7B61FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .reset-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 7px 14px;
+            color: #64748B;
+            font-size: 12px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover { color: #CBD5E1; border-color: rgba(255,255,255,0.2); }
+
+        .chart-wrap {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 24px 24px 20px;
+        }
+
+        /* ── Facilitator Mode ── */
+        .facilitator-wrap {
+            margin-top: 40px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .fac-toggle {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 7px 15px;
+            color: #475569;
+            font-size: 12px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fac-toggle:hover { color: #94A3B8; border-color: rgba(255,255,255,0.18); }
+
+        .fac-body {
+            display: none;
+            margin-top: 18px;
+        }
+
+        .fac-body.open { display: block; }
+
+        .fac-desc {
+            font-size: 12px;
+            color: #475569;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .fac-rows { display: flex; flex-direction: column; gap: 10px; }
+
+        .fac-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .fac-label {
+            font-size: 13px;
+            color: #94A3B8;
+            flex: 1;
+        }
+
+        .fac-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .fac-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #94A3B8;
+            font-size: 17px;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            line-height: 1;
+        }
+
+        .fac-btn:hover {
+            background: rgba(79,255,176,0.1);
+            color: #4FFFB0;
+            border-color: rgba(79,255,176,0.3);
+        }
+
+        .fac-count {
+            width: 32px;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 700;
+            color: #4FFFB0;
+        }
+
+        .fac-show-btn {
+            margin-top: 16px;
+            width: 100%;
+            padding: 13px;
+            background: rgba(79,255,176,0.09);
+            border: 1px solid rgba(79,255,176,0.25);
+            border-radius: 11px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4FFFB0;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fac-show-btn:hover {
+            background: rgba(79,255,176,0.15);
+            border-color: rgba(79,255,176,0.4);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding-top: 48px;
+            font-size: 12px;
+            color: #1E293B;
+        }
+
+        /* Scroll animation */
+        .section { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
+        .section.in-view { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">moloco</div>
+        <h1>SALES TEAM WORKSHOP</h1>
+        <p class="subtitle">Growth, Vision &amp; Evolution · Q3 2026 · Korea</p>
+        <div class="header-divider"></div>
+    </div>
+
+    <!-- Section 1: Agenda -->
+    <div class="section" id="s1">
+        <div class="section-tag">
+            <span class="section-num">Section 01</span>
+            <div class="section-line"></div>
+        </div>
+        <div class="section-title">Today's Agenda</div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="agenda-badge">01</div>
+                <div class="agenda-time">13:00 – 15:00</div>
+                <div class="agenda-name">5 Dynamics<br>Get to Know</div>
+                <div class="agenda-desc">Breaking the ice with team members</div>
+            </div>
+            <div class="card">
+                <div class="agenda-badge">02</div>
+                <div class="agenda-time">15:00 – 17:00</div>
+                <div class="agenda-name">Career Talk<br>&amp; Growth</div>
+                <div class="agenda-desc">Defining growth, envisioning futures</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Career Talk Topics -->
+    <div class="section" id="s2">
+        <div class="section-tag">
+            <span class="section-num">Section 02</span>
+            <div class="section-line"></div>
+        </div>
+        <div class="section-title">Career Talk: 3 Key Topics</div>
+        <div class="grid-3">
+            <div class="card topic-card">
+                <div class="topic-num">01</div>
+                <div class="topic-icon">📊</div>
+                <div class="topic-time">30 MIN</div>
+                <div class="topic-name">What Defines<br>Growth?</div>
+            </div>
+            <div class="card topic-card">
+                <div class="topic-num">02</div>
+                <div class="topic-icon">🎯</div>
+                <div class="topic-time">30 MIN</div>
+                <div class="topic-name">My Growth<br>in 5 Years</div>
+            </div>
+            <div class="card topic-card">
+                <div class="topic-num">03</div>
+                <div class="topic-icon">🤖</div>
+                <div class="topic-time">60 MIN</div>
+                <div class="topic-name">Evolving in<br>the AI Era</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Voting -->
+    <div class="section" id="s3">
+        <div class="section-tag">
+            <span class="section-num">Section 03</span>
+            <div class="section-line"></div>
+        </div>
+        <div class="section-title">What Defines Growth?</div>
+
+        <div class="vote-intro">
+            성장의 정의는 사람마다 다릅니다. 아래에서 <strong>나에게 가장 중요한 성장의 기준</strong>을 모두 선택해주세요 (복수 선택 가능).
+        </div>
+
+        <div class="vote-options" id="voteOptions"></div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitVote()">
+            <span id="submitLabel">투표하기 · Submit Vote</span>
+        </button>
+
+        <!-- Results -->
+        <div class="results-panel" id="resultsPanel">
+            <div class="results-notice">✓ 투표 완료 · 아래에서 내 선택 결과를 확인하세요</div>
+            <div class="results-header">
+                <div class="results-title">📊 투표 결과</div>
+                <button class="reset-btn" onclick="resetVote()">다시 투표</button>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Facilitator Mode -->
+        <div class="facilitator-wrap">
+            <button class="fac-toggle" onclick="toggleFacilitator()">🎙 Facilitator Mode</button>
+            <div class="fac-body" id="facBody">
+                <p class="fac-desc">팀 전체 투표를 직접 집계하세요. 각 항목의 +/- 버튼으로 인원을 입력한 후 결과를 표시합니다.</p>
+                <div class="fac-rows" id="facRows"></div>
+                <button class="fac-show-btn" onclick="showTeamResults()">📈 팀 전체 결과 보기 · Show Team Results</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">moloco · Q3'26 Korea Sales Workshop</div>
+
+<script>
+    const OPTIONS = [
+        { id: 1, emoji: '📈', text: '프로모션 (직급 상승)' },
+        { id: 2, emoji: '💰', text: '연봉 인상' },
+        { id: 3, emoji: '🔄', text: '새로운 역할' },
+        { id: 4, emoji: '🏆', text: '어려운 문제 해결, 프로젝트 완료에서 얻는 성취감' },
+        { id: 5, emoji: '🧠', text: '새로운 전문성 확보' },
+        { id: 6, emoji: '⚙️', text: '새로운 기술 마스터' },
+    ];
+
+    let selected = new Set();
+    let hasVoted = false;
+    let tallyCounts = OPTIONS.map(() => 0);
+    let chart = null;
+    let facOpen = false;
+
+    /* ── State persistence ── */
+    function loadState() {
+        try {
+            const s = localStorage.getItem('moloco_workshop_q326');
+            if (!s) return;
+            const d = JSON.parse(s);
+            selected = new Set(d.selected || []);
+            hasVoted = !!d.hasVoted;
+            tallyCounts = d.tallyCounts || OPTIONS.map(() => 0);
+        } catch(e) {}
+    }
+
+    function saveState() {
+        try {
+            localStorage.setItem('moloco_workshop_q326', JSON.stringify({
+                selected: [...selected],
+                hasVoted,
+                tallyCounts
+            }));
+        } catch(e) {}
+    }
+
+    /* ── Render vote options ── */
+    function renderOptions() {
+        const el = document.getElementById('voteOptions');
+        el.innerHTML = OPTIONS.map(opt => `
+            <div
+                class="vote-option ${selected.has(opt.id) ? 'selected' : ''} ${hasVoted ? 'locked' : ''}"
+                id="opt-${opt.id}"
+                onclick="${hasVoted ? '' : `toggleOpt(${opt.id})`}"
+            >
+                <div class="opt-checkbox">
+                    <span class="opt-check-icon">✓</span>
+                </div>
+                <span class="opt-num">${opt.id}</span>
+                <span class="opt-text">${opt.emoji} ${opt.text}</span>
+            </div>
+        `).join('');
+
+        const btn = document.getElementById('submitBtn');
+        if (hasVoted) {
+            btn.disabled = true;
+            document.getElementById('submitLabel').textContent = '✓ 투표 완료';
+            document.getElementById('resultsPanel').classList.add('visible');
+            renderIndividualChart([...selected]);
+        }
+    }
+
+    function toggleOpt(id) {
+        const el = document.getElementById(`opt-${id}`);
+        if (selected.has(id)) {
+            selected.delete(id);
+            el.classList.remove('selected');
+        } else {
+            selected.add(id);
+            el.classList.add('selected');
+        }
+    }
+
+    /* ── Submit ── */
+    function submitVote() {
+        if (selected.size === 0) {
+            alert('최소 1가지 이상 선택해주세요.');
+            return;
+        }
+        hasVoted = true;
+        saveState();
+        renderOptions();
+    }
+
+    /* ── Charts ── */
+    function buildChart(labels, data, barColors, borderColors, maxVal) {
+        if (chart) { chart.destroy(); chart = null; }
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: barColors,
+                    borderColor: borderColors,
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(9,9,15,0.9)',
+                        borderColor: 'rgba(79,255,176,0.2)',
+                        borderWidth: 1,
+                        titleColor: '#4FFFB0',
+                        bodyColor: '#94A3B8',
+                        callbacks: {
+                            title: (items) => OPTIONS[items[0].dataIndex].text,
+                            label: (item) => ` ${item.raw}${maxVal === 1 ? (item.raw ? ' 선택됨 ✓' : ' 미선택') : '명 선택'}`,
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        min: 0,
+                        max: maxVal <= 1 ? 1.2 : undefined,
+                        grid: { color: 'rgba(255,255,255,0.04)' },
+                        ticks: { display: false },
+                        border: { display: false }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: {
+                            color: '#64748B',
+                            font: { size: 12, family: 'Inter' },
+                            callback: (val, i) => {
+                                const t = OPTIONS[i].emoji + ' ' + OPTIONS[i].text;
+                                return t.length > 24 ? t.substring(0, 24) + '…' : t;
+                            }
+                        },
+                        border: { display: false }
+                    }
+                }
+            }
+        });
+
+        document.getElementById('myChart').parentElement.style.height = (OPTIONS.length * 54 + 20) + 'px';
+    }
+
+    function renderIndividualChart(selectedIds) {
+        const data = OPTIONS.map(o => selectedIds.includes(o.id) ? 1 : 0);
+        const barColors = data.map(v => v ? 'rgba(79,255,176,0.75)' : 'rgba(255,255,255,0.06)');
+        const borderColors = data.map(v => v ? '#4FFFB0' : 'rgba(255,255,255,0.08)');
+        const labels = OPTIONS.map(o => '');
+        buildChart(labels, data, barColors, borderColors, 1);
+    }
+
+    function showTeamResults() {
+        document.getElementById('resultsPanel').classList.add('visible');
+        document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        const maxVal = Math.max(...tallyCounts, 1);
+        const barColors = tallyCounts.map(v => {
+            const alpha = 0.25 + (v / maxVal) * 0.6;
+            return `rgba(79,255,176,${alpha.toFixed(2)})`;
+        });
+        const borderColors = tallyCounts.map(v => v > 0 ? '#4FFFB0' : 'rgba(255,255,255,0.08)');
+        const labels = OPTIONS.map(o => '');
+
+        // Update notice
+        const notice = document.querySelector('.results-notice');
+        notice.textContent = '📊 팀 전체 투표 결과 · Team Aggregated Results';
+
+        buildChart(labels, tallyCounts, barColors, borderColors, maxVal);
+    }
+
+    /* ── Reset ── */
+    function resetVote() {
+        if (!confirm('투표를 초기화하시겠습니까?')) return;
+        selected.clear();
+        hasVoted = false;
+        localStorage.removeItem('moloco_workshop_q326');
+        if (chart) { chart.destroy(); chart = null; }
+        document.getElementById('resultsPanel').classList.remove('visible');
+        renderOptions();
+    }
+
+    /* ── Facilitator ── */
+    function toggleFacilitator() {
+        facOpen = !facOpen;
+        const body = document.getElementById('facBody');
+        body.classList.toggle('open', facOpen);
+        if (facOpen) renderFacRows();
+    }
+
+    function renderFacRows() {
+        document.getElementById('facRows').innerHTML = OPTIONS.map((opt, i) => `
+            <div class="fac-row">
+                <span class="fac-label">${opt.emoji} ${opt.text}</span>
+                <div class="fac-controls">
+                    <button class="fac-btn" onclick="adjustTally(${i}, -1)">−</button>
+                    <span class="fac-count" id="tc-${i}">${tallyCounts[i]}</span>
+                    <button class="fac-btn" onclick="adjustTally(${i}, 1)">+</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function adjustTally(i, delta) {
+        tallyCounts[i] = Math.max(0, tallyCounts[i] + delta);
+        document.getElementById(`tc-${i}`).textContent = tallyCounts[i];
+        saveState();
+    }
+
+    /* ── Scroll animation ── */
+    function initScrollObserver() {
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) e.target.classList.add('in-view');
+            });
+        }, { threshold: 0.08 });
+        sections.forEach(s => observer.observe(s));
+    }
+
+    /* ── Init ── */
+    loadState();
+    renderOptions();
+    initScrollObserver();
+</script>
+</body>
+</html>
