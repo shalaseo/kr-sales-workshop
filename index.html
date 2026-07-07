@@ -649,7 +649,7 @@
                     <div class="topic-num">03</div>
                     <div class="topic-icon">🎯</div>
                     <div class="topic-time">30 MIN</div>
-                    <div class="topic-name">My Growth<br>in 5 Years</div>
+                    <div class="topic-name">My Growth<br>in 3 Years</div>
                 </div>
             </div>
         </div>
@@ -689,6 +689,16 @@
                     <div class="fac-rows" id="facRows"></div>
                     <button class="fac-show-btn" onclick="showTeamResults()">📈 팀 전체 결과 보기 · Show Team Results</button>
                 </div>
+            </div>
+
+            <!-- Team Vote Results (Firebase aggregated) -->
+            <div id="teamVotePanel" style="display:none; margin-top:28px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div style="font-size:14px; font-weight:600; color:var(--teal);">🌐 팀 전체 결과 · Team Results</div>
+                    <button class="ghost-btn" onclick="loadTeamVotes()" style="font-size:11px; padding:4px 10px;">🔄 새로고침</button>
+                </div>
+                <p id="teamVoteInfo" style="font-size:12px; color:var(--muted); margin-bottom:14px;"></p>
+                <div class="chart-wrap"><canvas id="teamVoteChart"></canvas></div>
             </div>
         </div>
 
@@ -737,6 +747,7 @@
         <div class="counter-wrap">
             <span class="counter-label">수집된 응답 · Responses collected</span>
             <span class="counter-val" id="responseCount">0 / 16</span>
+            <button class="ghost-btn" onclick="refreshAIFromDB()" style="margin-left:auto; font-size:11px; padding:4px 10px;">🔄 Refresh</button>
         </div>
         <div class="counter-track" style="margin-bottom:28px;">
             <div class="counter-fill" id="counterFill" style="width:0%"></div>
@@ -856,6 +867,7 @@
                 <div class="results-count" id="resultsCount">0명 응답</div>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
+                <button class="ghost-btn" onclick="refreshPrioritiesFromDB()" style="font-size:11px; padding:6px 12px;">🔄 Refresh</button>
                 <button class="group-toggle-btn" id="groupToggleBtn" onclick="toggleGroupView()">🔗 Group View</button>
                 <button class="ghost-btn" onclick="clearPriorities()">Clear All</button>
             </div>
@@ -904,11 +916,11 @@
                 <div class="pdp-field-header">
                     <div class="pdp-num">03</div>
                     <div class="pdp-label-wrap">
-                        <div class="pdp-label">My 5-Year Vision</div>
+                        <div class="pdp-label">My 3-Year Vision</div>
                         <div class="pdp-hint">Manager path (leading teams, strategic decisions) or Expert path (go-to person in a specific domain)? 어떤 모습이고 싶나요?</div>
                     </div>
                 </div>
-                <textarea id="pdpVision" class="textarea-input" placeholder="e.g. In 5 years, I want to be leading a regional sales team, setting strategy for the SEA market, and mentoring junior AEs..."></textarea>
+                <textarea id="pdpVision" class="textarea-input" placeholder="e.g. In 3 years, I want to be leading a regional sales team, setting strategy for the SEA market, and mentoring junior AEs..."></textarea>
             </div>
 
             <div class="pdp-field">
@@ -927,7 +939,7 @@
                     <div class="pdp-num">05</div>
                     <div class="pdp-label-wrap">
                         <div class="pdp-label">Skills &amp; Behaviors to Invest In</div>
-                        <div class="pdp-hint">What specific skills or behaviors do you want to build or strengthen?</div>
+                        <div class="pdp-hint">What specific skills or behaviors do you want to build or strengthen? Feel free to include your personal skills unrelated with work.</div>
                     </div>
                 </div>
                 <textarea id="pdpSkills" class="textarea-input" placeholder="e.g. Strategic storytelling for exec-level presentations, and improving my ability to ask deeper discovery questions..."></textarea>
@@ -973,7 +985,10 @@
                 <div style="font-size:21px; font-weight:700; color:var(--text); margin-bottom:4px;">PDP Results</div>
                 <div class="results-count" id="pdpResultsCount">0명 제출</div>
             </div>
-            <button class="ghost-btn" onclick="clearPDPs()">Clear All</button>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button class="ghost-btn" onclick="refreshPDPFromDB()" style="font-size:11px; padding:6px 12px;">🔄 Refresh</button>
+                <button class="ghost-btn" onclick="clearPDPs()">Clear All</button>
+            </div>
         </div>
 
         <div id="pdpResultCards" style="margin-top:24px;"></div>
@@ -984,9 +999,66 @@
 <div class="footer">moloco · Q3'26 Korea Sales Workshop</div>
 
 <script>
-/* ────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
+   JSONBIN.IO CONFIGURATION
+   ─────────────────────────────────────────────────────────
+   To enable cross-device data sharing:
+   1. Go to https://jsonbin.io and sign up (free)
+   2. Click "Create Bin" → paste the JSON below as the initial content → Create:
+      {"votes":[],"ai_responses":[],"priorities":[],"pdp":[]}
+   3. Copy the Bin ID from the response (the long string after /b/)
+   4. Go to Account → API Keys → copy your Master Key
+   5. Paste both values below
+═══════════════════════════════════════════════════════════ */
+const JSONBIN_ID  = '6a4c97f2da38895dfe391871';
+const JSONBIN_KEY = '$2a$10$LSjwGncAoQjbDpO1K/KNIOGQz1DaZpOFEOwG309Uj28kPVBo4Pn.O';
+
+const dbOK = () => JSONBIN_ID !== 'YOUR_BIN_ID' && JSONBIN_KEY !== 'YOUR_MASTER_KEY';
+const BIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+const BIN_HDR = () => ({ 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY });
+
+async function _binGet() {
+    try {
+        const r = await fetch(`${BIN_URL}/latest`, { headers: { 'X-Master-Key': JSONBIN_KEY } });
+        if (!r.ok) return null;
+        const d = await r.json();
+        const rec = d.record || {};
+        ['votes','ai_responses','priorities','pdp'].forEach(k => { if (!Array.isArray(rec[k])) rec[k] = []; });
+        return rec;
+    } catch(e) { console.warn('[bin] get error:', e); return null; }
+}
+
+async function _binPut(data) {
+    try {
+        await fetch(BIN_URL, { method:'PUT', headers: BIN_HDR(), body: JSON.stringify(data) });
+    } catch(e) { console.warn('[bin] put error:', e); }
+}
+
+async function dbPush(path, item) {
+    if (!dbOK()) return null;
+    const bin = await _binGet();
+    if (!bin) return null;
+    bin[path].push(item);
+    await _binPut(bin);
+}
+
+async function dbGet(path) {
+    if (!dbOK()) return null;
+    const bin = await _binGet();
+    return bin ? bin[path] : null;
+}
+
+async function dbClear(path) {
+    if (!dbOK()) return;
+    const bin = await _binGet();
+    if (!bin) return;
+    bin[path] = [];
+    await _binPut(bin);
+}
+
+/* ─────────────────────────────────────
    VOTING (Section 3)
-──────────────────────────────────────── */
+───────────────────────────────────── */
 const VOTE_OPTS = [
     { id:1, emoji:'📈', text:'프로모션 (직급 상승)' },
     { id:2, emoji:'💰', text:'연봉 인상' },
@@ -998,7 +1070,7 @@ const VOTE_OPTS = [
 
 let selected = new Set(), hasVoted = false;
 let tallyCounts = VOTE_OPTS.map(() => 0);
-let voteChart = null, facOpen = false;
+let voteChart = null, teamVoteChartInst = null, facOpen = false;
 
 function loadVote() {
     try {
@@ -1035,9 +1107,67 @@ function toggleVote(id) {
     else { selected.add(id); el.classList.add('selected'); }
 }
 
-function submitVote() {
+async function submitVote() {
     if (!selected.size) { alert('최소 1가지 이상 선택해주세요.'); return; }
-    hasVoted = true; saveVote(); renderVoteOpts();
+    hasVoted = true; saveVote();
+    await dbPush('votes', { selections: [...selected], ts: Date.now() });
+    renderVoteOpts();
+    loadTeamVotes();
+}
+
+async function loadTeamVotes() {
+    const data = await dbGet('votes');
+    const panel = document.getElementById('teamVotePanel');
+    const info  = document.getElementById('teamVoteInfo');
+    if (!data || !data.length) { if (panel) panel.style.display = 'none'; return; }
+
+    // Aggregate counts
+    const counts = VOTE_OPTS.map(() => 0);
+    data.forEach(v => (v.selections || []).forEach(id => {
+        const i = VOTE_OPTS.findIndex(o => o.id === id);
+        if (i >= 0) counts[i]++;
+    }));
+    tallyCounts = counts;
+    if (panel) panel.style.display = 'block';
+    if (info)  info.textContent = `${data.length}명 응답 수집됨 · ${data.length} responses`;
+
+    // Draw team chart
+    if (teamVoteChartInst) { teamVoteChartInst.destroy(); teamVoteChartInst = null; }
+    const ctx = document.getElementById('teamVoteChart').getContext('2d');
+    const maxVal = Math.max(...counts, 1);
+    teamVoteChartInst = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: VOTE_OPTS.map(() => ''),
+            datasets: [{
+                data: counts,
+                backgroundColor: counts.map(v => `rgba(79,255,176,${(0.2+(v/maxVal)*0.6).toFixed(2)})`),
+                borderColor: counts.map(v => v > 0 ? '#4FFFB0' : 'rgba(255,255,255,0.07)'),
+                borderWidth: 1, borderRadius: 6,
+            }]
+        },
+        options: {
+            indexAxis: 'y', responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor:'rgba(9,9,15,0.9)', borderColor:'rgba(79,255,176,0.2)', borderWidth:1,
+                    titleColor:'#4FFFB0', bodyColor:'#94A3B8',
+                    callbacks: {
+                        title: items => VOTE_OPTS[items[0].dataIndex].text,
+                        label: item => ` ${item.raw}명 선택`,
+                    }
+                }
+            },
+            scales: {
+                x: { min:0, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#475569', stepSize:1}, border:{display:false} },
+                y: { grid:{display:false}, border:{display:false},
+                    ticks: { color:'#64748B', font:{size:12,family:'Inter'},
+                        callback:(v,i)=>{ const t=VOTE_OPTS[i].emoji+' '+VOTE_OPTS[i].text; return t.length>27?t.slice(0,27)+'…':t; } } }
+            }
+        }
+    });
+    document.getElementById('teamVoteChart').parentElement.style.height = (VOTE_OPTS.length*52+24)+'px';
 }
 
 function drawVoteChart(selIds, isTeam) {
@@ -1093,11 +1223,15 @@ function showTeamResults() {
     drawVoteChart([], true);
 }
 
-function resetVote() {
+async function resetVote() {
     if (!confirm('투표를 초기화하시겠습니까?')) return;
     selected.clear(); hasVoted = false; localStorage.removeItem('mw_vote');
+    await dbClear('votes');
     if (voteChart) { voteChart.destroy(); voteChart = null; }
+    if (teamVoteChartInst) { teamVoteChartInst.destroy(); teamVoteChartInst = null; }
     document.getElementById('resultsPanel').classList.remove('visible');
+    const panel = document.getElementById('teamVotePanel');
+    if (panel) panel.style.display = 'none';
     document.getElementById('submitBtn').disabled = false;
     document.getElementById('submitLabel').textContent = '투표하기 · Submit Vote';
     renderVoteOpts();
@@ -1179,13 +1313,13 @@ function updateCounter() {
     document.getElementById('counterFill').style.width = `${(n/MAX_R)*100}%`;
 }
 
-function submitAI() {
-    if (aiResponses.length >= MAX_R) { alert(`이미 ${MAX_R}명의 응답이 완료되었습니다.`); return; }
-
+async function submitAI() {
     const values = TASKS.map(t => parseInt(document.getElementById('sl-'+t.id).value));
     const jitters = TASKS.map(() => (Math.random()-0.5)*0.42);
-    aiResponses.push({ values, jitters });
+    const ts = Date.now();
+    aiResponses.push({ values, jitters, ts });
     saveAI(); updateCounter();
+    await dbPush('ai_responses', { values, ts });
 
     // Reset sliders
     TASKS.forEach(t => { document.getElementById('sl-'+t.id).value = 50; updateInd(t.id, 50); });
@@ -1198,6 +1332,19 @@ function submitAI() {
     setTimeout(() => { btn.innerHTML = orig; btn.style.background = btn.style.color = btn.style.border = ''; }, 1500);
 
     // Refresh chart if open
+    if (document.getElementById('aiResults').style.display !== 'none') drawDotPlot();
+}
+
+async function refreshAIFromDB() {
+    const data = await dbGet('ai_responses');
+    if (!data || !data.length) return;
+    const existingTs = new Set(aiResponses.map(r => r.ts));
+    data.forEach(r => {
+        if (!existingTs.has(r.ts)) {
+            aiResponses.push({ values: r.values, jitters: TASKS.map(() => (Math.random()-0.5)*0.42), ts: r.ts });
+        }
+    });
+    saveAI(); updateCounter();
     if (document.getElementById('aiResults').style.display !== 'none') drawDotPlot();
 }
 
@@ -1298,10 +1445,11 @@ function hideAIResults() {
     document.getElementById('showResBtn').style.display = 'block';
 }
 
-function clearAI() {
+async function clearAI() {
     if (!aiResponses.length) return;
     if (!confirm('모든 응답을 초기화하시겠습니까?')) return;
     aiResponses = []; localStorage.removeItem('mw_ai');
+    await dbClear('ai_responses');
     if (aiChart) { aiChart.destroy(); aiChart = null; }
     updateCounter();
     document.getElementById('aiResults').style.display = 'none';
@@ -1337,7 +1485,7 @@ function getPriValue(n) {
     return sel.value;
 }
 
-function submitPriority() {
+async function submitPriority() {
     const name = document.getElementById('priName').value.trim();
     const p1 = getPriValue(1), p2 = getPriValue(2), p3 = getPriValue(3);
 
@@ -1346,8 +1494,10 @@ function submitPriority() {
     if (!p2)         { alert('Priority 2을 선택해주세요.'); return; }
     if (!p3)         { alert('Priority 3을 선택해주세요.'); return; }
 
-    priResponses.push({ name, priorities: [p1, p2, p3], ts: Date.now() });
+    const entry = { name, priorities: [p1, p2, p3], ts: Date.now() };
+    priResponses.push(entry);
     savePri();
+    await dbPush('priorities', entry);
     renderResultCards();
 
     // Reset form
@@ -1395,10 +1545,20 @@ function renderResultCards() {
         </div>`).join('');
 }
 
-function clearPriorities() {
+async function refreshPrioritiesFromDB() {
+    const data = await dbGet('priorities');
+    if (!data || !data.length) return;
+    const existingTs = new Set(priResponses.map(r => r.ts));
+    data.forEach(r => { if (!existingTs.has(r.ts)) priResponses.push(r); });
+    savePri(); renderResultCards();
+    if (groupViewActive) renderGroupView();
+}
+
+async function clearPriorities() {
     if (!priResponses.length) return;
     if (!confirm('모든 응답을 초기화하시겠습니까?')) return;
     priResponses = []; localStorage.removeItem('mw_pri');
+    await dbClear('priorities');
     renderResultCards();
     if (groupViewActive) renderGroupView();
 }
@@ -1408,7 +1568,7 @@ function clearPriorities() {
 ──────────────────────────────────────── */
 const PDP_FIELDS = [
     { key:'growth',  label:'My Growth Definition' },
-    { key:'vision',  label:'My 5-Year Vision' },
+    { key:'vision',  label:'My 3-Year Vision' },
     { key:'ai',      label:'AI Leverage Plan' },
     { key:'skills',  label:'Skills & Behaviors to Invest In' },
     { key:'support', label:'Support I Need' },
@@ -1424,7 +1584,7 @@ function savePDP() {
     localStorage.setItem('mw_pdp', JSON.stringify(pdpResponses));
 }
 
-function submitPDP() {
+async function submitPDP() {
     const entry = {
         name:    document.getElementById('pdpName').value.trim(),
         growth:  document.getElementById('pdpGrowth').value.trim(),
@@ -1442,6 +1602,7 @@ function submitPDP() {
 
     pdpResponses.push(entry);
     savePDP();
+    await dbPush('pdp', entry);
     renderPDPResults();
 
     // Reset
@@ -1486,10 +1647,19 @@ function renderPDPResults() {
         </div>`).join('');
 }
 
-function clearPDPs() {
+async function refreshPDPFromDB() {
+    const data = await dbGet('pdp');
+    if (!data || !data.length) return;
+    const existingTs = new Set(pdpResponses.map(r => r.ts));
+    data.forEach(r => { if (!existingTs.has(r.ts)) pdpResponses.push(r); });
+    savePDP(); renderPDPResults();
+}
+
+async function clearPDPs() {
     if (!pdpResponses.length) return;
     if (!confirm('모든 PDP를 초기화하시겠습니까?')) return;
     pdpResponses = []; localStorage.removeItem('mw_pdp');
+    await dbClear('pdp');
     renderPDPResults();
 }
 
@@ -1629,8 +1799,9 @@ function switchTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-'+tab).classList.add('active');
     btn.classList.add('active');
-    if (tab === 'results') renderResultCards();
-    if (tab === 'pdpresults') renderPDPResults();
+    if (tab === 'results')    { refreshPrioritiesFromDB().then(() => renderResultCards()); }
+    if (tab === 'pdpresults') { refreshPDPFromDB().then(() => renderPDPResults()); }
+    if (tab === 'ai')         { refreshAIFromDB(); }
 }
 
 /* ────────────────────────────────────────
@@ -1641,13 +1812,16 @@ function initObserver() {
     document.querySelectorAll('.section').forEach(s => obs.observe(s));
 }
 
-/* ────────────────────────────────────────
+/* ─────────────────────────────────────
    INIT
-──────────────────────────────────────── */
+───────────────────────────────────── */
+async function initFromDB() {
+    await Promise.all([ loadTeamVotes(), refreshAIFromDB(), refreshPrioritiesFromDB(), refreshPDPFromDB() ]);
+}
+
 loadVote(); loadAI(); loadPri(); loadPDP();
 renderVoteOpts(); renderSliders(); renderResultCards(); renderPDPResults();
 initObserver();
-// Render fac rows on load (hidden)
 document.getElementById('facRows').innerHTML = VOTE_OPTS.map((o,i) => `
     <div class="fac-row">
         <span class="fac-label">${o.emoji} ${o.text}</span>
@@ -1657,6 +1831,7 @@ document.getElementById('facRows').innerHTML = VOTE_OPTS.map((o,i) => `
             <button class="fac-btn" onclick="adjTally(${i},1)">+</button>
         </div>
     </div>`).join('');
+initFromDB();
 </script>
 </body>
 </html>
